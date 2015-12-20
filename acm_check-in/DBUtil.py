@@ -50,7 +50,7 @@ class DB:
          self.dbConn.close()
 
 
-   def addCard(self, cardID, userID, initialPoints):
+   def addCard(self, cardID, userID, initialVisits):
       # Init some stuff that could cause problems if not initialized
       sqlError = None
 
@@ -59,7 +59,7 @@ class DB:
       
       try:
          # Add the new record into the DB
-         cursor.execute("""INSERT INTO %s (cardID, userID, points) values (\'%s\', \'%s\', %s);""" % (self.dbTable, cardID, userID, initialPoints))
+         cursor.execute("""INSERT INTO %s (cardID, userID, visits) values (\'%s\', \'%s\', %s);""" % (self.dbTable, cardID, userID, initialVisits))
          status = c.SUCCESS
       except MySQLdb.Error, e:
          status = c.SQL_ERROR
@@ -70,7 +70,7 @@ class DB:
       return {"addCardStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
 
 
-   def checkin(self, cardID, pointValue):
+   def checkin(self, cardID, visits):
       # Init some stuff that could cause problems if not initialized
       status = c.FAILURE
       userID = None
@@ -99,8 +99,8 @@ class DB:
 
 
          if status == c.SUCCESS:
-            # Update the database with the new points         
-            cursor.execute("""UPDATE %s SET points=points+%s WHERE cardID=\'%s\';""" % (self.dbTable, pointValue, cardID))
+            # Update the database with the new visits         
+            cursor.execute("""UPDATE %s SET visits=visits+%s WHERE cardID=\'%s\';""" % (self.dbTable, visits, cardID))
 
             # Grab the user ID that just checked-in to print confirmation
             cursor.execute("""SELECT userID FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
@@ -142,7 +142,7 @@ class DB:
          return c.SUCCESS
 
 
-   def showPoints(self, userID=""):
+   def showVisits(self, userID=""):
       # Init result and sqlError
       result = None
       sqlError = None
@@ -151,11 +151,11 @@ class DB:
       cursor = self.dbConn.cursor()
 
       try:
-         # Either get all user ID's and points from DB or just one user ID
+         # Either get all user ID's and visits from DB or just one user ID
          if userID == "":
-            cursor.execute("""SELECT userID, points FROM %s ORDER BY points DESC;""" % (self.dbTable))
+            cursor.execute("""SELECT userID, visits FROM %s ORDER BY visits DESC;""" % (self.dbTable))
          else:
-            cursor.execute("""SELECT userID, points FROM %s WHERE userID=\'%s\';""" % (self.dbTable, userID))
+            cursor.execute("""SELECT userID, visits FROM %s WHERE userID=\'%s\';""" % (self.dbTable, userID))
 
          # Show error if no results (user ID is not in database)
          if cursor.rowcount == 0:
@@ -170,4 +170,4 @@ class DB:
       finally:
          cursor.close()
 
-      return {"showPointsStatus": status, "pointsTuple": result, "sqlError": sqlError}
+      return {"showVisitsStatus": status, "visitsTuple": result, "sqlError": sqlError}
