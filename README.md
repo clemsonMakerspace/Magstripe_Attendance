@@ -1,33 +1,27 @@
-Penn State ACM Check-in
+Clemson University Makerspace Magstripe Attendance Tracker (CUMMAT)
 =======================
 
-#### Shane Tully (shane@shanetully.com)
-#### shanetully.com & acm.psu.edu
+#### Owen Phillips (ophilli@clemson.edu)
 
 ### Dependencies
 
-The Penn State ACM Check-in is a Python 2.x application.
-There are two dependencies:
+This attendance software is currently based on Python 2.X
+There are two Python dependencies:
    1. `PyQt` - Python bindings for QT
    1. `MySQLdb` - Python MySQL library
 
-### Database
+### Configuration
 
-To actaully use it, however, you will need a database server (either a remote server or hosted locally).
-The default host, database, table, and host are configurable in the `Constants.py` module or are able to
-be entered in the login screen of the application.
+This program requires a database server (remote or local), that is configurable in 'Constants.py' or may be selected during login.
 
 For the database, this application expects a table with four columns:
    1. card ID        - card ID from ID card (`varchar`, `primary key`)
-   1. user ID      - university username (`varchar`)
+   1. user ID        - university username (`varchar`)
    1. points         - the number of points (`int`)
    1. last check-in  - the time of last check-in (`timestamp`)
 
-You'll probably want to change the default database information for your database in `Constants.py`.
-
-Finally, the whole script is pointless without a card reader. This application was built for a card read that 
-uses keyboard emulation. Hence, you could just type the card info in, but without a card reader you have no way of 
-knowing what that info is.
+This application was built for a card reader that 
+uses keyboard emulation. You can type the card info in, but a card reader is suggested.
 
 ### Usage
 
@@ -36,14 +30,13 @@ Simply run "./Check-in.py" to start the GUI.
 There is also a text-only mode. This can be started by using the "--nogui" argument.
 In text mode, enter "back" at any time to go up a menu level or exit the check-in loop.
 
-To populate your database, select the check-in option and if a card doesn't exist in the database 
-you will be prompted to add it.
+To populate your database, select the check-in option and begin adding users.
 
 After your database is populated you can use the "Show Points" option to show a single user's points or view a pretty
 table of all users in descending order from most to least points.
 
-Note that, by default, a card is only allowed to check-in once per hour to prevent abuse. This can
-be disabled by setting `ALLOW_CHECKIN_WITHIN_HOUR` to `0` in `Constants.py`.
+By default a card is only allowed to check-in once per hour to prevent abuse. This can
+be modified by changing the value of `ALLOW_CHECKIN_WITHIN_HOUR` in `Constants.py`.
 
 ### Packaging
 
