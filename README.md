@@ -19,7 +19,7 @@ be entered in the login screen of the application.
 
 For the database, this application expects a table with four columns:
    1. card ID        - card ID from ID card (`varchar`, `primary key`)
-   1. owner ID      - human-readable owner of card name (`varchar`)
+   1. user ID      - university username (`varchar`)
    1. points         - the number of points (`int`)
    1. last check-in  - the time of last check-in (`timestamp`)
 
