@@ -14,14 +14,18 @@ There are two Python dependencies:
 
 This program requires a database server (remote or local), that is configurable in 'Constants.py' or may be selected during login.
 
-For the database, this application expects a table with four columns:
+For the database, this application expects two tables - users & checkIns
+
+Setup the users table with 3 columns: 
    1. card ID        - card ID from ID card (`varchar`, `primary key`)
    1. user ID        - university username (`varchar`)
-   1. points         - the number of points (`int`)
-   1. last check-in  - the time of last check-in (`timestamp`)
+   1. visits         - the number of check-ins (`int`)
+   
+Setup the checkIns table with 2 columns:
+   1. card ID
+   1. checkIn  - the time of last check-in (`timestamp`)
 
-This application was built for a card reader that 
-uses keyboard emulation. You can type the card info in, but a card reader is suggested.
+This application was built for a card reader that uses keyboard emulation. You can type the card info in, but a card reader is suggested.
 
 ### Usage
 
