@@ -13,7 +13,7 @@ import DBUtil
 
 
 def main(args):
-   print "Penn State ACM Check-in System Version" , c.VERSION
+   print "Clemson University Makerspace Attendance System Version" , c.VERSION
 
    # Init textMode
    textMode = 0
