@@ -64,31 +64,31 @@ class CheckinThread(QThread):
       if checkinResult["sqlError"] is None:
          checkinResult["sqlError"] = object()
 
-      self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["accessID"], checkinResult["cardID"], checkinResult["sqlError"], self.pointValue)
+      self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["userID"], checkinResult["cardID"], checkinResult["sqlError"], self.pointValue)
 
 
 class AddCardThread(QThread):
    cardAddedSignal = Signal(int, str, str, object, str)
 
-   def __init__(self, db, cardID, accessID, pointValue, cardAddedCallback):
+   def __init__(self, db, cardID, userID, pointValue, cardAddedCallback):
       super(AddCardThread, self).__init__()
 
       self.db = db
       self.pointValue = str(pointValue)
       self.cardID = cardID
-      self.accessID = accessID
+      self.userID = userID
 
       self.cardAddedSignal.connect(cardAddedCallback)
 
    
    def run(self):
-      addCardResult = self.db.addCard(self.cardID, self.accessID, self.pointValue)
+      addCardResult = self.db.addCard(self.cardID, self.userID, self.pointValue)
 
       # Don't send nonetype's through signals
       if addCardResult['sqlError'] is None:
          addCardResult['sqlError'] = object()
 
-      self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["accessID"], addCardResult["cardID"], addCardResult["sqlError"], self.pointValue)
+      self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["cardID"], addCardResult["sqlError"], self.pointValue)
 
 
 class ShowPointsThread(QThread):
@@ -98,16 +98,16 @@ class ShowPointsThread(QThread):
       super(ShowPointsThread, self).__init__()
 
       self.db = db
-      self.accessID = accessID
+      self.userID = userID
 
       self.showPointsSignal.connect(showPointsCallback)
    
 
-   def setAccessID(self, accessID):
-      self.accessID = accessID
+   def setUserID(self, userID):
+      self.userID = userID
    
    def run(self):
-      showPointsResult = self.db.showPoints(self.accessID)
+      showPointsResult = self.db.showPoints(self.userID)
 
       # Don't send nonetype's through a signal or it gets angry and seg faults
       if showPointsResult["sqlError"] is None:
