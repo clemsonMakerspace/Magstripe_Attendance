@@ -38,7 +38,7 @@ class DB:
          return c.SUCCESS
       except MySQLdb.Error, e:
          # Bad password error
-         if "Access denied" in e.args[1]:
+         if "user denied" in e.args[1]:
             return c.BAD_PASSWD
          # Other error
          else:
@@ -50,7 +50,7 @@ class DB:
          self.dbConn.close()
 
 
-   def addCard(self, cardID, accessID, initialPoints):
+   def addCard(self, cardID, userID, initialPoints):
       # Init some stuff that could cause problems if not initialized
       sqlError = None
 
@@ -59,7 +59,7 @@ class DB:
       
       try:
          # Add the new record into the DB
-         cursor.execute("""INSERT INTO %s (cardID, accessID, points) values (\'%s\', \'%s\', %s);""" % (self.dbTable, cardID, accessID, initialPoints))
+         cursor.execute("""INSERT INTO %s (cardID, userID, points) values (\'%s\', \'%s\', %s);""" % (self.dbTable, cardID, userID, initialPoints))
          status = c.SUCCESS
       except MySQLdb.Error, e:
          status = c.SQL_ERROR
@@ -67,13 +67,13 @@ class DB:
       finally:
          cursor.close()
 
-      return {"addCardStatus": status, "accessID": accessID, "cardID": cardID, "sqlError": sqlError}
+      return {"addCardStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
 
 
    def checkin(self, cardID, pointValue):
       # Init some stuff that could cause problems if not initialized
       status = c.FAILURE
-      accessID = None
+      userID = None
       sqlError = None
 
       # Get a cursor to the DB
@@ -102,10 +102,10 @@ class DB:
             # Update the database with the new points         
             cursor.execute("""UPDATE %s SET points=points+%s WHERE cardID=\'%s\';""" % (self.dbTable, pointValue, cardID))
 
-            # Grab the access ID that just checked-in to print confirmation
-            cursor.execute("""SELECT accessID FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
+            # Grab the user ID that just checked-in to print confirmation
+            cursor.execute("""SELECT userID FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
 
-            accessID = cursor.fetchone()[0]
+            userID = cursor.fetchone()[0]
       except MySQLdb.Error, e:
          status = c.SQL_ERROR
          sqlError = e
@@ -115,7 +115,7 @@ class DB:
       finally:
          cursor.close()
 
-      return {"checkinStatus": status, "accessID": accessID, "cardID": cardID, "sqlError": sqlError}
+      return {"checkinStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
 
    
    def checkCheckinTime(self, lastCheckin):
@@ -142,7 +142,7 @@ class DB:
          return c.SUCCESS
 
 
-   def showPoints(self, accessID=""):
+   def showPoints(self, userID=""):
       # Init result and sqlError
       result = None
       sqlError = None
@@ -151,13 +151,13 @@ class DB:
       cursor = self.dbConn.cursor()
 
       try:
-         # Either get all access ID's and points from DB or just one access ID
-         if accessID == "":
-            cursor.execute("""SELECT accessID, points FROM %s ORDER BY points DESC;""" % (self.dbTable))
+         # Either get all user ID's and points from DB or just one user ID
+         if userID == "":
+            cursor.execute("""SELECT userID, points FROM %s ORDER BY points DESC;""" % (self.dbTable))
          else:
-            cursor.execute("""SELECT accessID, points FROM %s WHERE accessID=\'%s\';""" % (self.dbTable, accessID))
+            cursor.execute("""SELECT userID, points FROM %s WHERE userID=\'%s\';""" % (self.dbTable, userID))
 
-         # Show error if no results (access ID is not in database)
+         # Show error if no results (user ID is not in database)
          if cursor.rowcount == 0:
             status = c.NO_RESULTS
          else:
