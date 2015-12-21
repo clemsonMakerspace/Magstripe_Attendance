@@ -130,7 +130,8 @@ class LoginWnd(QMainWindow):
       dbTable = str(self.tableEdit.text())
       dbUser = str(self.userEdit.text())
       dbPass = str(self.passEdit.text())
-
+      #dbDatabase = "makerdatabase"
+      
       # Check if user or pass are empty
       if dbHost == "":
          QMessageBox.warning(self, "Error", "Host field cannot be empty", QMessageBox.Ok, QMessageBox.Ok)
@@ -201,14 +202,13 @@ class MainWnd(QMainWindow):
       self.move(geo.topLeft())
       
       # Title, icon, and statusbar
-      self.setWindowTitle("ACM Points Check-in")
+      self.setWindowTitle(c.GROUP_INITIALS + " Attendance")
       self.setWindowIcon(QIcon(os.path.abspath("images/login_logo.png")))
-      self.statusBar().showMessage("Connected to server  |  Penn State ACM Chceck-in System Version " + str(c.VERSION))
-
+      self.statusBar().showMessage("Connected to server  |  " + c.GROUP_NAME + " Attendance Tracker Version " + str(c.VERSION))
       # Init all the central widgets
       self.initMainMenuWidget()
       self.initCheckinWidget()
-      self.initShowPointsWidget()
+      self.initShowVisitsWidget()
 
       # Init the central stacked widget and set it as the central widget
       # This allows us to change the central widget easily
@@ -218,7 +218,7 @@ class MainWnd(QMainWindow):
       # Add the widgets to the main central stacked widget
       self.centralWidget.addWidget(self.mainMenuWidget)
       self.centralWidget.addWidget(self.checkinWidget)
-      self.centralWidget.addWidget(self.pointsWidget)
+      self.centralWidget.addWidget(self.visitsWidget)
 
       # Show the main menu first
       self.showMainMenuWidget()
@@ -238,7 +238,7 @@ class MainWnd(QMainWindow):
             # Set the card ID and start the checkin thread
             # cardID is going into an SQL query; don't forget to sanitize the input
             if not (self.checkinThread.isRunning() and self.sleepThread.isRunning()):
-               self.checkinThread.setCardID(SharedUtils.sanitizeInput(str(cardID)))
+               self.checkinThread.setCardID(sharedUtils.sanitizeInput(str(cardID)))
                self.checkinThread.start()
 
          except AttributeError:
@@ -256,14 +256,14 @@ class MainWnd(QMainWindow):
    def initMainMenuWidget(self):
       self.mainMenuWidget = QWidget()
 
-      checkinButton = QImageButton("Check-in", Utils.os.path.abspath('images/magnetic_card.png'), self.showCheckinWidget, 100, self)
-      showPointsButton = QImageButton("Show Points", Utils.os.path.abspath('images/trophy.png'), self.showPointsWidget, 100, self)
+      checkinButton = QImageButton("Check-in", os.path.abspath('images/magnetic_card.png'), self.showCheckinWidget, 100, self)
+      showVisitsButton = QImageButton("Show Visits", os.path.abspath('images/trophy.png'), self.showVisitsWidget, 100, self)
 
       hbox = QHBoxLayout()
       hbox.addStretch(1)
       hbox.addWidget(checkinButton)
       hbox.addSpacing(45)
-      hbox.addWidget(showPointsButton)
+      hbox.addWidget(showVisitsButton)
       hbox.addStretch(1)
 
       self.mainMenuWidget.setLayout(hbox)
@@ -319,34 +319,34 @@ class MainWnd(QMainWindow):
       self.checkinWidget.setLayout(hbox)
 
    
-   def initShowPointsWidget(self):
-      self.pointsWidget = QWidget()
+   def initShowVisitsWidget(self):
+      self.visitsWidget = QWidget()
 
       self.checkinThread = None
 
       # Init widgets
-      self.pointsTitle = QLabel("Current Points Standings")
-      self.pointsTextArea = QTextEdit()
-      self.pointsBackBtn = QPushButton("Back", self)
+      self.visitsTitle = QLabel("Current visits Standings")
+      self.visitsTextArea = QTextEdit()
+      self.visitsBackBtn = QPushButton("Back", self)
 
       # Set the font for the checkin label
-      self.pointsTitle.setFont(QFont("Sans Serif", 12, QFont.Bold))
+      self.visitsTitle.setFont(QFont("Sans Serif", 12, QFont.Bold))
 
       # Add signals to buttons
-      self.pointsBackBtn.clicked.connect(self.closeShowPointsScreen)
+      self.visitsBackBtn.clicked.connect(self.closeShowVisitsScreen)
 
-      # Create the layout for the points scroll area
-      self.pointsTextArea.setFont(QFont("Monospace", 8, QFont.Normal))
+      # Create the layout for the visits scroll area
+      self.visitsTextArea.setFont(QFont("Monospace", 8, QFont.Normal))
 
       # Add widgets to vbox layout for vertical centering
       vbox = QVBoxLayout()
       vbox.addStretch(1)
-      vbox.addWidget(self.pointsTitle, alignment=Qt.AlignCenter)
-      vbox.addWidget(self.pointsTextArea)
-      vbox.addWidget(self.pointsBackBtn)
+      vbox.addWidget(self.visitsTitle, alignment=Qt.AlignCenter)
+      vbox.addWidget(self.visitsTextArea)
+      vbox.addWidget(self.visitsBackBtn)
       vbox.addStretch(1)
 
-      self.pointsWidget.setLayout(vbox)
+      self.visitsWidget.setLayout(vbox)
 
 
    def showMainMenuWidget(self):
@@ -356,12 +356,12 @@ class MainWnd(QMainWindow):
    def showCheckinWidget(self):
       self.centralWidget.setCurrentWidget(self.checkinWidget)
 
-      # Get the point value
+      # Get the visit value
       while 1:
-         pointValue, ok = QInputDialog.getText(self, "Point Value", "Point Value:", text=str(c.DEFAULT_POINTS))
+         visitValue, ok = QInputDialog.getText(self, "Visit Value", "Visit Value:", text=str(c.DEFAULT_VISITS))
 
          if ok:
-            if str(pointValue).isdigit():
+            if str(visitValue).isdigit():
                break
             else:
                QMessageBox.critical(self, "Input Error", "Invalid input", QMessageBox.Ok, QMessageBox.Ok)
@@ -370,25 +370,25 @@ class MainWnd(QMainWindow):
             return
       
       # Init the checkin thread
-      # pointValue will be used in SQL queries. Sanitize it.
-      self.checkinThread = CheckinThread(self.db, SharedUtils.sanitizeInput(str(pointValue)), self.postCardSwipe)
+      # visitValue will be used in SQL queries. Sanitize it.
+      self.checkinThread = CheckinThread(self.db, sharedUtils.sanitizeInput(str(visitValue)), self.postCardSwipe)
 
    
-   def showPointsWidget(self):
-      self.pointsTextArea.clear()
-      self.centralWidget.setCurrentWidget(self.pointsWidget)
+   def showVisitsWidget(self):
+      self.visitsTextArea.clear()
+      self.centralWidget.setCurrentWidget(self.visitsWidget)
 
-      # Get the access ID to show points for or an empty string for all access ID's
-      accessID, ok = QInputDialog.getText(self, "Access ID", "Access ID (blank for all access ID\'s):")
+      # Get the user ID to show visits for or an empty string for all user ID's
+      userID, ok = QInputDialog.getText(self, "User ID", "User ID (blank for all user ID\'s):")
 
       if not ok:
-         # The show points thread was not declared yet so just skip the closeShowPointsScreen function
+         # The show visits thread was not declared yet so just skip the closeShowvisitsScreen function
          self.showMainMenuWidget()
       
-      # Init the show points thread
-      # accessID will be used in SQL queries. Sanitize it.
-      self.showPointsThread = ShowPointsThread(self.db, SharedUtils.sanitizeInput(str(accessID)), self.setPoints)
-      self.showPointsThread.start()
+      # Init the show visits thread
+      # userID will be used in SQL queries. Sanitize it.
+      self.showVisitsThread = ShowVisitsThread(self.db, sharedUtils.sanitizeInput(str(userID)), self.setVisits)
+      self.showVisitsThread.start()
 
 
    def closeCheckinScreen(self):
@@ -399,14 +399,14 @@ class MainWnd(QMainWindow):
       self.showMainMenuWidget()
 
    
-   def closeShowPointsScreen(self):
-      # End the show points thread we started
-      self.showPointsThread.terminate()
+   def closeShowVisitsScreen(self):
+      # End the show visits thread we started
+      self.showVisitsThread.terminate()
 
       self.showMainMenuWidget()
 
 
-   def postCardSwipe(self, checkinStatus, accessID, cardID, sqlError, pointValue):
+   def postCardSwipe(self, checkinStatus, userID, cardID, sqlError, visitValue):
       if checkinStatus == c.SQL_ERROR:
          QMessageBox.critical(self, "Database Error", "WARNING! Database error: " + sqlError.args[1], QMessageBox.Ok, QMessageBox.Ok)
          # Don't bother to change UI elements or start the sleep thread, just wait for the next card
@@ -422,18 +422,18 @@ class MainWnd(QMainWindow):
          self.checkinLabel.setText("Previous check-in time was in the future. Check your local system time.")
       elif checkinStatus == c.SUCCESS:
          self.checkinImg.setPixmap(self.greenPix)
-         self.checkinLabel.setText(str(accessID) + " +" + str(pointValue) + " points")
+         self.checkinLabel.setText(str(userID) + " +" + str(visitValue) + " visits")
       elif checkinStatus == c.CARD_NOT_IN_DB:
          # If the card is not in the DB ask to add it
          reply = QMessageBox.question(self, "Card Not in Database", "This card was not found in the database. Add it now?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
          if reply == QMessageBox.Yes:
-            # If adding new card, get the accessID associated with the card
-            accessID, ok = QInputDialog.getText(self, "Add New Card", "Access ID:")
+            # If adding new card, get the userID associated with the card
+            userID, ok = QInputDialog.getText(self, "Add New Card", "User ID:")
 
-            # Sanitize the accessID input and call the add card thread
-            if ok and accessID != "":
-               self.addCardThread = AddCardThread(self.db, cardID, SharedUtils.sanitizeInput(str(accessID)), pointValue, self.postCardSwipe)
+            # Sanitize the userID input and call the add card thread
+            if ok and userID != "":
+               self.addCardThread = AddCardThread(self.db, cardID, sharedUtils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
                self.addCardThread.start()
 
          # Don't bother to change UI elements or start the sleep thread, just wait for the next card
@@ -461,17 +461,17 @@ class MainWnd(QMainWindow):
       self.checkinLabel.update()
 
    
-   def setPoints(self, showPointsStatus, pointsTuple, sqlError):
-      if showPointsStatus == c.NO_RESULTS:
-            QMessageBox.critical(self, "Empty Query", "The specified access ID was not found in the database", QMessageBox.Ok, QMessageBox.Ok)
+   def setVisits(self, showVisitsStatus, visitsTuple, sqlError):
+      if showVisitsStatus == c.NO_RESULTS:
+            QMessageBox.critical(self, "Empty Query", "The specified user ID was not found in the database", QMessageBox.Ok, QMessageBox.Ok)
             return
-      for i in range(len(pointsTuple)):
-         accessID = str(pointsTuple[i][0])
-         points = str(pointsTuple[i][1])
-         self.pointsTextArea.append(accessID + "\t" + points)
+      for i in range(len(visitsTuple)):
+         userID = str(visitsTuple[i][0])
+         visits = str(visitsTuple[i][1])
+         self.visitsTextArea.append(userID + "\t" + visits)
 
       # Move the scrollbar to the top
-      scrollbar = self.pointsTextArea.verticalScrollBar()
+      scrollbar = self.visitsTextArea.verticalScrollBar()
       scrollbar.setValue(scrollbar.minimum())
 
 
@@ -516,7 +516,7 @@ class QImageButton(QWidget):
         QWidget.__init__(self, parent)
 
         icon = QLabel(self)
-        icon.setPixmap(QPixmap(imagePath).scaled(imageSize, imageSize, TransformationMode = Qt.SmoothTransformation))
+        icon.setPixmap(QPixmap(imagePath)) #.scaled(imageSize, imageSize, TransformationMode = Qt.SmoothTransformation))
 
         button = QPushButton(buttonText)
         button.clicked.connect(buttonCallback)

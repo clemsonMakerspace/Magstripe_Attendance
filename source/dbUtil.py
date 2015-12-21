@@ -29,14 +29,14 @@ class DB:
             self.dbPass = getDbPass()
 
         try:  # Connect to the database server
-            self.dbConn = psycopg2.connect(database = dbDatabase, user = dbUser, password = dbPass, host = dbHost)
+            self.dbConn = psycopg2.connect(database = self.dbDatabase, user = self.dbUser, password = self.dbPass, host = self.dbHost)
             return c.SUCCESS         
         except psycopg2.Error as e:
-            if "user denied" in e.args[1]:  # Bad password error
-                print(e.pgerror)
-                return c.BAD_PASSWD
-            else:  # Other error
-                return c.FAILURE
+            #if "user denied" in e.args[1]:  # Bad password error
+            print(e.pgerror)
+                #return c.BAD_PASSWD
+            #else:  # Other error
+                #return c.FAILURE
 
 
     def close(self):

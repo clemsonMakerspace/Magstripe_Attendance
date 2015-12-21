@@ -86,31 +86,31 @@ class AddCardThread(QThread):
       self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["cardID"], addCardResult["sqlError"], self.pointValue)
 
 
-class ShowPointsThread(QThread):
-   showPointsSignal = pyqtSignal(int, object, object)
+class ShowVisitsThread(QThread):
+   showVisitsSignal = pyqtSignal(int, object, object)
 
-   def __init__(self, db, userID, showPointsCallback):
-      super(ShowPointsThread, self).__init__()
+   def __init__(self, db, userID, showVisitsCallback):
+      super(ShowVisitsThread, self).__init__()
 
       self.db = db
       self.userID = userID
 
-      self.showPointsSignal.connect(showPointsCallback)
+      self.showVisitsSignal.connect(showVisitsCallback)
    
 
    def setUserID(self, userID):
       self.userID = userID
    
    def run(self):
-      showPointsResult = self.db.showPoints(self.userID)
+      showVisitsResult = self.db.showVisits(self.userID)
 
       # Don't send nonetype's through a signal or it gets angry and seg faults
-      if showPointsResult["sqlError"] is None:
-         showPointsResult["sqlError"] = object()
-      if showPointsResult["pointsTuple"] is None:
-         showPointsResult["pointsTuple"] = object()
+      if showVisitsResult["sqlError"] is None:
+         showVisitsResult["sqlError"] = object()
+      if showVisitsResult["visitsTuple"] is None:
+         showVisitsResult["visitsTuple"] = object()
 
-      self.showPointsSignal.emit(showPointsResult["showPointsStatus"], showPointsResult["pointsTuple"], showPointsResult["sqlError"])
+      self.showVisitsSignal.emit(showVisitsResult["showVisitsStatus"], showVisitsResult["visitsTuple"], showVisitsResult["sqlError"])
 
 
 class SleepThread(QThread):
