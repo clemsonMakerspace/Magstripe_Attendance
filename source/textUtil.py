@@ -4,7 +4,7 @@ import getpass
 
 from dbUtil import DB
 import sharedUtils
-import constants 
+import constants as c
 
 class TextUI:
    def __init__(self):
@@ -29,7 +29,7 @@ class TextUI:
 
             # If we failed to connect to the database offer to re-enter db info
             if connectStatus != c.SUCCESS:
-               reenter = raw_input("Failed to connect to database. Re-enter database info? (Y,n) ")
+               reenter = input("Failed to connect to database. Re-enter database info? (Y,n) ")
                if reenter.lower() == "n":
                   print("Bye.")
                   sys.exit(0)
@@ -54,7 +54,7 @@ class TextUI:
          # Display main menu
          print("\n\t1.) Check-in\n\t2.) Show Points\n\t3.) Exit")
          try:
-            option = raw_input("\n>> ")
+            option = input("\n>> ")
 
             if option == "1":
                self.checkin()
@@ -63,7 +63,7 @@ class TextUI:
             elif option == "3":
                sys.exit(0)
             elif option == "back" or option == "exit":
-               exit = raw_input("Exit? (y,N) ")
+               exit = input("Exit? (y,N) ")
                if exit.lower() == "y":
                   sys.exit(0)
             else:
@@ -95,7 +95,7 @@ class TextUI:
       # Get and validate the point value for this check-in
       # Limited to 500 points to prevent bad typos
       while 1:
-         pointValue = SharedUtils.sanitizeInput(raw_input("\nPoint Value (" + str(c.DEFAULT_POINTS) + "): "))
+         pointValue = SharedUtils.sanitizeInput(input("\nPoint Value (" + str(c.DEFAULT_POINTS) + "): "))
          
          # Validate point input
          if pointValue == "":
@@ -133,13 +133,13 @@ class TextUI:
             print("Error: Previous check-in time was in the future. Check your local system time.")
          elif checkinResult["checkinStatus"] == c.CARD_NOT_IN_DB:
             # Ask if user wants to add the card
-            addCard = raw_input("Error: Card not found in database. Add it now? (Y,n) ")
+            addCard = input("Error: Card not found in database. Add it now? (Y,n) ")
             
             if addCard == "n":
                continue
             
             # Get the userID for the new card
-            userID = SharedUtils.sanitizeInput(raw_input("User ID: "))
+            userID = SharedUtils.sanitizeInput(input("User ID: "))
 
             # Add the card
             addCardResult = self.db.addCard(cardID, userID, pointValue)
@@ -156,7 +156,7 @@ class TextUI:
 
 
    def showPoints(self):
-      userID = SharedUtils.sanitizeInput(raw_input("\nUser ID (blank for all): "))
+      userID = SharedUtils.sanitizeInput(input("\nUser ID (blank for all): "))
       showPointsResult = self.db.showPoints(userID)
 
       if showPointsResult["showPointsStatus"] == c.SQL_ERROR:
@@ -195,17 +195,17 @@ class TextUI:
 
 
    def getDbInfo(self):
-      self.dbHost = raw_input("Database host: (" + c.DEFAULT_HOST + ") ")
+      self.dbHost = input("Database host: (" + c.DEFAULT_HOST + ") ")
 
       if self.dbHost == "":
          self.dbHost = c.DEFAULT_HOST
 
-      self.dbTable = raw_input("Database table: (" + c.DEFAULT_TABLE + ") ")
+      self.dbTable = input("Database table: (" + c.DEFAULT_TABLE + ") ")
 
       if self.dbTable == "":
          self.dbTable = c.DEFAULT_TABLE
 
-      self.dbUser = raw_input("Database Username: (" + c.DEFAULT_USER + ") ")
+      self.dbUser = input("Database Username: (" + c.DEFAULT_USER + ") ")
 
       if self.dbUser == "":
          self.dbUser = c.DEFAULT_USER
