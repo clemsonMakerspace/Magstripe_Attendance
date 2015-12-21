@@ -1,13 +1,12 @@
 from time import sleep
-from PySide.QtCore import QThread
-from PySide.QtCore import Signal
+from PyQt5.QtCore import QThread, pyqtSignal
 
-from DBUtil import DB
-import Constants as c
+from dbUtil import DB
+import constants as c
 
 
 class LoginThread(QThread):
-   postLoginSignal = Signal(int, object)
+   postLoginSignal = pyqtSignal(int, object)
 
    def __init__(self, dbHost, dbDatabase, dbTable, dbUser, dbPass, postLoginCallback):
       super(LoginThread, self).__init__()
@@ -31,7 +30,7 @@ class LoginThread(QThread):
 
 
 class CheckinThread(QThread):
-   postCardSwipeSignal = Signal(int, str, str, object, str)
+   postCardSwipeSignal = pyqtSignal(int, str, str, object, str)
 
    def __init__(self, db, pointValue, postCardSwipeCallback):
       super(CheckinThread, self).__init__()
@@ -64,7 +63,7 @@ class CheckinThread(QThread):
 
 
 class AddCardThread(QThread):
-   cardAddedSignal = Signal(int, str, str, object, str)
+   cardAddedSignal = pyqtSignal(int, str, str, object, str)
 
    def __init__(self, db, cardID, userID, pointValue, cardAddedCallback):
       super(AddCardThread, self).__init__()
@@ -88,7 +87,7 @@ class AddCardThread(QThread):
 
 
 class ShowPointsThread(QThread):
-   showPointsSignal = Signal(int, object, object)
+   showPointsSignal = pyqtSignal(int, object, object)
 
    def __init__(self, db, userID, showPointsCallback):
       super(ShowPointsThread, self).__init__()
@@ -115,7 +114,7 @@ class ShowPointsThread(QThread):
 
 
 class SleepThread(QThread):
-   wakeupSignal = Signal()
+   wakeupSignal = pyqtSignal()
 
    def __init__(self, time, wakeupCallback):
       super(SleepThread, self).__init__()

@@ -2,9 +2,9 @@ import sys
 import re
 import getpass
 
-from DBUtil import DB
-import SharedUtils
-import source.constants 
+from dbUtil import DB
+import sharedUtils
+import constants 
 
 class TextUI:
    def __init__(self):

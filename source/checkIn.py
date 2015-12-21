@@ -1,8 +1,9 @@
+#!/usr/bin/env python
 import sys
-from UIUtil import UI
-from TextUtil import TextUI
+from ui import UI
+from textUtil import TextUI
 import constants as c
-import DBUtil
+import dbUtil
 
 
 def main(args):

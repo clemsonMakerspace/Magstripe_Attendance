@@ -2,14 +2,14 @@ import re
 import sys
 import time
 import os
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
-from PySide.QtGui import *
-from PySide.QtCore import *
-
-from DBUtil import DB
-from Threads import *
-import SharedUtils
-import Constants as c
+from dbUtil import DB
+from threads import *
+import sharedUtils
+import constants as c
 
 
 class UI(QApplication):
@@ -247,7 +247,7 @@ class MainWnd(QMainWindow):
 
 
    def closeEvent(self, closeEvent):
-      print "Cleaning up and exiting..."
+      print("Cleaning up and exiting...")
       if self.db is not None:
          self.db.close()
       closeEvent.accept();
