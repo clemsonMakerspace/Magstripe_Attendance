@@ -8,7 +8,7 @@ Clemson University Makerspace Magstripe Attendance Tracker (CUMMAT)
 This attendance software is currently based on Python 2.X
 There are two Python dependencies:
    1. `PyQt` - Python bindings for QT
-   1. `MySQLdb` - Python MySQL library
+   1. `psycopg2` - Python Postgres library
 
 ### Configuration
 
@@ -24,7 +24,7 @@ Setup the users table with 3 columns:
 Setup the checkIns table with 2 columns:
    1. card ID
    1. checkIn  - the time of last check-in (`timestamp`)
-
+   
 This application was built for a card reader that uses keyboard emulation. You can type the card info in, but a card reader is suggested.
 
 ### Usage
