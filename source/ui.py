@@ -33,7 +33,7 @@ class LoginWnd(QMainWindow):
       self.centralWidget = QWidget()
 
       # Create logo
-      logoPix = QPixmap(os.path.abspath("images/login_logo.png"))
+      logoPix = QPixmap(os.path.abspath("images/login_logo.jpeg"))
       self.logoImg = QLabel(self)
       self.logoImg.setPixmap(logoPix)
 
@@ -47,7 +47,7 @@ class LoginWnd(QMainWindow):
 
       # Create username label and text edit
       self.userLabel = QLabel("Username:", self)
-      self.userEdit = QLineEdit("points", self)
+      self.userEdit = QLineEdit(c.DEFAULT_USER, self)
 
       self.passLabel = QLabel("Password:", self)
       self.passEdit = QLineEdit(self)
@@ -59,7 +59,7 @@ class LoginWnd(QMainWindow):
       self.loginBtn = QPushButton("Login", self)
       self.exitBtn = QPushButton("Exit", self)
       
-      self.loginBtn.setToolTip("Log in to MySQL server")
+      self.loginBtn.setToolTip("Log in to Postgres server")
       self.exitBtn.setToolTip("Exit")
 
       self.loginBtn.resize(self.loginBtn.sizeHint())
@@ -112,16 +112,16 @@ class LoginWnd(QMainWindow):
 
       # Center the window
       # setGeometry args are x, y, width, height
-      self.setGeometry(0, 0, 500, 200)
+      self.setGeometry(0, 0, 575, 200)
       geo = self.frameGeometry()
       centerPt = QDesktopWidget().availableGeometry().center()
       geo.moveCenter(centerPt)
       self.move(geo.topLeft())
       
       # Title and icon
-      self.setWindowTitle("ACM Login")
+      self.setWindowTitle(c.GROUP_INITIALS + " Login")
       self.setWindowIcon(QIcon(os.path.abspath("images/login_logo.png")))
-      self.statusBar().showMessage("Not connected to server  |  Penn State ACM Chceck-in System Version " + str(c.VERSION))
+      self.statusBar().showMessage("Not connected to server  |  " + c.GROUP_NAME + " Attendance Tracker Version " + str(c.VERSION))
 
 
 

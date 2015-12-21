@@ -1,10 +1,12 @@
-VERSION = "5.1"
+VERSION = "6.0"
+GROUP_NAME = "Clemson University Makerspace"
+GROUP_INITIALS = "CMS"
 
 DEFAULT_HOST                = "localhost"
-DEFAULT_USER                = "points"
-DEFAULT_DATABASE            = "points"
-DEFAULT_TABLE               = "points_fall_13"
-DEFAULT_POINTS              = 50
+DEFAULT_USER                = "user"
+DEFAULT_DATABASE            = "user"
+DEFAULT_TABLE               = "visits_spring_16"
+DEFAULT_POINTS              = 0
 ALLOW_CHECKIN_WITHIN_HOUR   = 0
 TIME_BETWEEN_CHECKINS       = 2 # In seconds
 

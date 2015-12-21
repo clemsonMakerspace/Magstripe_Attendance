@@ -7,7 +7,7 @@ import dbUtil
 
 
 def main(args):
-    print("Clemson University Makerspace Attendance Tracker Version" , c.VERSION)
+    print(c.GROUP_NAME, "Attendance Tracker Version", c.VERSION)
     # Init textMode
     textMode = 0
    # Process the arguments
