@@ -5,8 +5,7 @@ Clemson University Makerspace Magstripe Attendance Tracker (CUMMAT)
 
 ### Dependencies
 
-This attendance software is currently based on Python 2.X
-There are two Python dependencies:
+This is a Python 3.x program depending on the following additional libraries
    1. `PyQt` - Python bindings for QT
    1. `psycopg2` - Python Postgres library
 
@@ -50,8 +49,6 @@ To create this binary, download PyInstaller and run `make.py dist [path to pyins
 Alternatively, precompiled binaries are available on the releases page on the GitHub repo.
 
 ### License
-
-Copyright (C) 2013 Shane Tully
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Lesser General Public License as published by
