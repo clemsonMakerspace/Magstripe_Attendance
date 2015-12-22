@@ -230,10 +230,10 @@ class TextUI:
         while 1:
             self.dbPass = getpass.getpass("Database Password: ")
 
-        if self.dbPass == "":
-            print("Database password cannot be blank.")
-        else:
-            break
+            if self.dbPass == "":
+                print("Database password cannot be blank.")
+            else:
+                break
 
 
     def showCheckinConfirmation(self, userID, pointValue):
