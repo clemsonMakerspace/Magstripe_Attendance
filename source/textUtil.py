@@ -70,14 +70,14 @@ class TextUI:
 
         while 1:
             # Display main menu
-            print("\n\t1.) Check-in\n\t2.) Show Points\n\t3.) Exit")
+            print("\n\t1.) Check-in\n\t2.) Show Visits\n\t3.) Exit")
             try:
                 option = input("\n>> ")
 
                 if option == "1":
                     self.checkin()
                 elif option == "2":
-                    self.showPoints()
+                    self.showVisits()
                 elif option == "3":
                     sys.exit(0)
                 elif option == "back" or option == "exit":
@@ -109,16 +109,16 @@ class TextUI:
 
 
     def checkin(self):
-        # Get and validate the point value for this check-in
-        # Limited to 500 points to prevent bad typos
+        # Get and validate the visit value for this check-in
+        # Limited to 500 visits to prevent bad typos
         while 1:
-            pointValue = SharedUtils.sanitizeInput(input("\nPoint Value (" + str(c.DEFAULT_POINTS) + "): "))
+            visitValue = sharedUtils.sanitizeInput(input("\nVisit Value (" + str(c.DEFAULT_VISITS) + "): "))
 
-            # Validate point input
-            if pointValue == "":
-                pointValue = str(c.DEFAULT_POINTS)
+            # Validate visit input
+            if visitValue == "":
+                visitValue = str(c.DEFAULT_VISITS)
                 break
-            elif (pointValue.isdigit() and int(pointValue) <= 500) or pointValue == "back":
+            elif (visitValue.isdigit() and int(visitValue) <= 500) or visitValue == "back":
                 break
             else:
                 print("Invalid input. Try again.")
@@ -134,13 +134,13 @@ class TextUI:
                 continue
 
             # Sanitize cardID
-            cardID = SharedUtils.sanitizeInput(cardID)
+            cardID = sharedUtils.sanitizeInput(cardID)
             # cardID will be empty if it failed sanitization. Skip checkin if that is the case
             if cardID == "":
                 continue
 
             # Do the checkin
-            checkinResult = self.db.checkin(cardID, pointValue)
+            checkinResult = self.db.checkin(cardID, visitValue)
 
             if checkinResult["checkinStatus"] == c.SQL_ERROR:
                 self.showDatabaseError(checkinResult["sqlError"])
@@ -156,47 +156,47 @@ class TextUI:
                 continue
             
             # Get the userID for the new card
-            userID = SharedUtils.sanitizeInput(input("User ID: "))
+            userID = sharedUtils.sanitizeInput(input("User ID: "))
 
             # Add the card
-            addCardResult = self.db.addCard(cardID, userID, pointValue)
+            addCardResult = self.db.addCard(cardID, userID, visitValue)
 
             if addCardResult["addCardStatus"] == c.SUCCESS:
-                self.showCheckinConfirmation(userID, pointValue)
+                self.showCheckinConfirmation(userID, visitValue)
             elif addCardResult["addCardStatus"] == c.SQL_ERROR:
                 self.showDatabaseError(addCardResult["sqlError"])
             elif checkinResult["checkinStatus"] == c.SUCCESS:
-                self.showCheckinConfirmation(checkinResult["userID"], pointValue)
+                self.showCheckinConfirmation(checkinResult["userID"], visitValue)
             else:
                 print("Unknown error checking in.")
 
 
-    def showPoints(self):
-        userID = SharedUtils.sanitizeInput(input("\nUser ID (blank for all): "))
-        showPointsResult = self.db.showPoints(userID)
+    def showVisits(self):
+        userID = sharedUtils.sanitizeInput(input("\nUser ID (blank for all): "))
+        showVisitsResult = self.db.showVisits(userID)
 
-        if showPointsResult["showPointsStatus"] == c.SQL_ERROR:
-            self.showDatabaseError(showPointsResult["sqlError"])
-        elif showPointsResult["showPointsStatus"] == c.NO_RESULTS:
+        if showVisitsResult["showVisitsStatus"] == c.SQL_ERROR:
+            self.showDatabaseError(showVisitsResult["sqlError"])
+        elif showVisitsResult["showVisitsStatus"] == c.NO_RESULTS:
             print("\nThere were no results to that query.")
-        elif showPointsResult["showPointsStatus"] == c.SUCCESS:
+        elif showVisitsResult["showVisitsStatus"] == c.SUCCESS:
             # If showing all users, display a pretty table
             if userID == "":
-                print("\n+--------------------+\n| User ID | Points |\n+--------------------+")
+                print("\n+--------------------+\n| User ID | Visits |\n+--------------------+")
 
-                for i in range(len(showPointsResult["pointsTuple"])):
-                    print("|%10s | %6s |" % (showPointsResult["pointsTuple"][i][0], showPointsResult["pointsTuple"][i][1]))
+                for i in range(len(showVisitsResult["visitsTuple"])):
+                    print("|%10s | %6s |" % (showVisitsResult["visitsTuple"][i][0], showVisitsResult["visitsTuple"][i][1]))
                 
                 print("+--------------------+")
          
-            # Show a single user's points
+            # Show a single user's visits
             else:
-                print("\n%s has %s points." % (userID, str(showPointsResult["pointsTuple"][0][0])))
+                print("\n%s has %s visits." % (userID, str(showVisitsResult["visitsTuple"][0][0])))
 
 
     def getCardSwipe(self):
         # Read the card data as a password so it doesn't show on the screen
-        cardID = SharedUtils.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
+        cardID = sharedUtils.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
         try:
             # Return the card ID
             return self.regex.search(cardID).group(1)
@@ -236,8 +236,8 @@ class TextUI:
                 break
 
 
-    def showCheckinConfirmation(self, userID, pointValue):
-        print("%s +%s points" % (userID, pointValue))
+    def showCheckinConfirmation(self, userID, visitValue):
+        print("%s +%s visits" % (userID, visitValue))
 
 
     def showDatabaseError(self, error):
