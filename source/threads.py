@@ -25,129 +25,129 @@ import constants as c
 
 
 class LoginThread(QThread):
-   postLoginSignal = pyqtSignal(int, object)
+    postLoginSignal = pyqtSignal(int, object)
 
-   def __init__(self, dbHost, dbDatabase, dbTable, dbUser, dbPass, postLoginCallback):
-      super(LoginThread, self).__init__()
-      self.dbHost = dbHost
-      self.dbDatabase = dbDatabase
-      self.dbTable = dbTable
-      self.dbUser = dbUser
-      self.dbPass = dbPass
+    def __init__(self, dbHost, dbDatabase, dbTable, dbUser, dbPass, postLoginCallback):
+        super(LoginThread, self).__init__()
+        self.dbHost = dbHost
+        self.dbDatabase = dbDatabase
+        self.dbTable = dbTable
+        self.dbUser = dbUser
+        self.dbPass = dbPass
 
-      self.postLoginSignal.connect(postLoginCallback)
+        self.postLoginSignal.connect(postLoginCallback)
 
    
-   def run(self):
-      # Init the db object
-      db = DB(self.dbHost, self.dbDatabase, self.dbTable, self.dbUser, self.dbPass)
+    def run(self):
+        # Init the db object
+        db = DB(self.dbHost, self.dbDatabase, self.dbTable, self.dbUser, self.dbPass)
 
-      # Connect to the remote database server
-      loginStatus = db.connect()
+        # Connect to the remote database server
+        loginStatus = db.connect()
    
-      self.postLoginSignal.emit(loginStatus, db)
+        self.postLoginSignal.emit(loginStatus, db)
 
 
 class CheckinThread(QThread):
-   postCardSwipeSignal = pyqtSignal(int, str, str, object, str)
+    postCardSwipeSignal = pyqtSignal(int, str, str, object, str)
 
-   def __init__(self, db, pointValue, postCardSwipeCallback):
-      super(CheckinThread, self).__init__()
+    def __init__(self, db, pointValue, postCardSwipeCallback):
+        super(CheckinThread, self).__init__()
 
-      self.db = db
-      self.pointValue = str(pointValue)
-      self.cardID = None
+        self.db = db
+        self.pointValue = str(pointValue)
+        self.cardID = None
 
-      self.postCardSwipeSignal.connect(postCardSwipeCallback)
+        self.postCardSwipeSignal.connect(postCardSwipeCallback)
 
 
-   def setCardID(self, cardID):
-      self.cardID = cardID
+    def setCardID(self, cardID):
+        self.cardID = cardID
    
-   def run(self):
-      # Warning: setCardID() must have been called before starting this thread
+    def run(self):
+        # Warning: setCardID() must have been called before starting this thread
 
-      # At least make sure the card ID is of the right length. Not much more validation can be done.
-      if len(self.cardID) != 16:
-         self.postCardSwipeSignal.emit(c.ERROR_READING_CARD, '', '', object(), self.pointValue)
-         return
+        # At least make sure the card ID is of the right length. Not much more validation can be done.
+        if len(self.cardID) != 16:
+            self.postCardSwipeSignal.emit(c.ERROR_READING_CARD, '', '', object(), self.pointValue)
+            return
       
-      checkinResult = self.db.checkin(self.cardID, self.pointValue)
+        checkinResult = self.db.checkin(self.cardID, self.pointValue)
 
-      # Don't pass nonetype's through signals expecting an object or seg faults happen
-      if checkinResult["sqlError"] is None:
-         checkinResult["sqlError"] = object()
+        # Don't pass nonetype's through signals expecting an object or seg faults happen
+        if checkinResult["sqlError"] is None:
+            checkinResult["sqlError"] = object()
 
-      self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["userID"], checkinResult["cardID"], checkinResult["sqlError"], self.pointValue)
+        self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["userID"], checkinResult["cardID"], checkinResult["sqlError"], self.pointValue)
 
 
 class AddCardThread(QThread):
-   cardAddedSignal = pyqtSignal(int, str, str, object, str)
+    cardAddedSignal = pyqtSignal(int, str, str, object, str)
 
-   def __init__(self, db, cardID, userID, pointValue, cardAddedCallback):
-      super(AddCardThread, self).__init__()
+    def __init__(self, db, cardID, userID, pointValue, cardAddedCallback):
+        super(AddCardThread, self).__init__()
 
-      self.db = db
-      self.pointValue = str(pointValue)
-      self.cardID = cardID
-      self.userID = userID
+        self.db = db
+        self.pointValue = str(pointValue)
+        self.cardID = cardID
+        self.userID = userID
 
-      self.cardAddedSignal.connect(cardAddedCallback)
+        self.cardAddedSignal.connect(cardAddedCallback)
 
    
-   def run(self):
-      addCardResult = self.db.addCard(self.cardID, self.userID, self.pointValue)
+    def run(self):
+        addCardResult = self.db.addCard(self.cardID, self.userID, self.pointValue)
 
-      # Don't send nonetype's through signals
-      if addCardResult['sqlError'] is None:
-         addCardResult['sqlError'] = object()
+        # Don't send nonetype's through signals
+        if addCardResult['sqlError'] is None:
+            addCardResult['sqlError'] = object()
 
-      self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["cardID"], addCardResult["sqlError"], self.pointValue)
+        self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["cardID"], addCardResult["sqlError"], self.pointValue)
 
 
 class ShowVisitsThread(QThread):
-   showVisitsSignal = pyqtSignal(int, object, object)
+    showVisitsSignal = pyqtSignal(int, object, object)
 
-   def __init__(self, db, userID, showVisitsCallback):
-      super(ShowVisitsThread, self).__init__()
+    def __init__(self, db, userID, showVisitsCallback):
+        super(ShowVisitsThread, self).__init__()
 
-      self.db = db
-      self.userID = userID
+        self.db = db
+        self.userID = userID
 
-      self.showVisitsSignal.connect(showVisitsCallback)
+        self.showVisitsSignal.connect(showVisitsCallback)
    
 
-   def setUserID(self, userID):
-      self.userID = userID
+    def setUserID(self, userID):
+        self.userID = userID
    
-   def run(self):
-      showVisitsResult = self.db.showVisits(self.userID)
+    def run(self):
+        showVisitsResult = self.db.showVisits(self.userID)
 
-      # Don't send nonetype's through a signal or it gets angry and seg faults
-      if showVisitsResult["sqlError"] is None:
-         showVisitsResult["sqlError"] = object()
-      if showVisitsResult["visitsTuple"] is None:
-         showVisitsResult["visitsTuple"] = object()
+        # Don't send nonetype's through a signal or it gets angry and seg faults
+        if showVisitsResult["sqlError"] is None:
+            showVisitsResult["sqlError"] = object()
+        if showVisitsResult["visitsTuple"] is None:
+            showVisitsResult["visitsTuple"] = object()
 
-      self.showVisitsSignal.emit(showVisitsResult["showVisitsStatus"], showVisitsResult["visitsTuple"], showVisitsResult["sqlError"])
+        self.showVisitsSignal.emit(showVisitsResult["showVisitsStatus"], showVisitsResult["visitsTuple"], showVisitsResult["sqlError"])
 
 
 class SleepThread(QThread):
-   wakeupSignal = pyqtSignal()
+    wakeupSignal = pyqtSignal()
 
-   def __init__(self, time, wakeupCallback):
-      super(SleepThread, self).__init__()
+    def __init__(self, time, wakeupCallback):
+        super(SleepThread, self).__init__()
 
-      self.time = time
-      self.wakeupSignal.connect(wakeupCallback)
+        self.time = time
+        self.wakeupSignal.connect(wakeupCallback)
 
 
-   def setTime(self, time):
-      self.time = time
+    def setTime(self, time):
+        self.time = time
 
-   def getTime(self):
-      return self.time
+    def getTime(self):
+        return self.time
 
-   def run(self):
-      sleep(self.time)
-      self.wakeupSignal.emit()
+    def run(self):
+        sleep(self.time)
+        self.wakeupSignal.emit()

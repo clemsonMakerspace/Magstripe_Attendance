@@ -43,11 +43,11 @@ class DB:
         self.dbUser = dbUser
         self.dbPass = dbPass
 
-    def connect(self):  # If a password was not given, ask for it
+    def connect(self):# If a password was not given, ask for it
         if self.dbPass == "":
             self.dbPass = getDbPass()
 
-        try:  # Connect to the database server
+        try:# Connect to the database server
             self.dbConn = psycopg2.connect(database = self.dbDatabase, user = self.dbUser, password = self.dbPass, host = self.dbHost)
             return c.SUCCESS         
         except psycopg2.Error as e:
@@ -69,7 +69,7 @@ class DB:
         cursor = self.dbConn.cursor()
       
         try:
-              # Add the new record into the DB
+            # Add the new record into the DB
             cursor.execute("""INSERT INTO %s (cardID, userID, visits) values (\'%s\', \'%s\', %s);""" % (self.dbTable, cardID, userID, initialVisits))
             status = c.SUCCESS
         
@@ -170,7 +170,7 @@ class DB:
 
             # Show error if no results (user ID is not in database)
             if cursor.rowcount == 0:
-                 status = c.NO_RESULTS
+                status = c.NO_RESULTS
             else:
                 result = cursor.fetchall()
                 status = c.SUCCESS
