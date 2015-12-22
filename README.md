@@ -2,6 +2,7 @@ Magstripe Attendance Database
 =============================
 
 #### Owen Phillips (ophilli@clemson.edu)
+#### Shane Tully (shane@shanetully.com)
 
 ### Dependencies
 
@@ -47,8 +48,6 @@ To create this binary, download PyInstaller and run `make.py dist [path to pyins
 Alternatively, precompiled binaries are available on the releases page on the GitHub repo.
 
 ### License
-
-Copyright (C) 2015 Owen Phillips
 
 This program is free software: you can redistribute it and/or modify 
 it under the terms of the GNU General Public License as published by 
