@@ -41,6 +41,7 @@ def main(args):
             textMode = 1
         else:
             print("Invalid argument:", args[1])
+            sys.exit(0)
 
     # Start the program into either textmode or GUI mode
     if textMode == 0:
