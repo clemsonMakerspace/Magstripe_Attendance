@@ -142,7 +142,9 @@ class LoginWnd(QMainWindow):
         self.statusBar().showMessage("Not connected to server  |  " + c.GROUP_NAME + " Attendance Tracker Version " + str(c.VERSION))
 
 
-
+    #===========================================================================
+    # 
+    #===========================================================================
     def preLogin(self):
         dbHost = str(self.hostEdit.text())
         dbTable = str(self.tableEdit.text())
@@ -247,15 +249,15 @@ class MainWnd(QMainWindow):
             try:
                 # Try to match the input to the card ID regex
                 r =  self.regex.search(self.cardInput)
-                cardID = r.groups()[0]
+                CUID = r.groups()[0]
 
                 # A match was made so reset cardInput for the next card
                 self.cardInput = ""
 
                 # Set the card ID and start the checkin thread
-                # cardID is going into an SQL query; don't forget to sanitize the input
+                # CUID is going into an SQL query; don't forget to sanitize the input
                 if not (self.checkinThread.isRunning() and self.sleepThread.isRunning()):
-                    self.checkinThread.setCardID(Utils.sanitizeInput(str(cardID)))
+                    self.checkinThread.setCardID(Utils.sanitizeInput(str(CUID)))
                     self.checkinThread.start()
 
             except AttributeError:
@@ -396,7 +398,7 @@ class MainWnd(QMainWindow):
         self.centralWidget.setCurrentWidget(self.visitsWidget)
 
         # Get the user ID to show visits for or an empty string for all user ID's
-        userID, ok = QInputDialog.getText(self, "User ID", "User ID (blank for all user ID\'s):")
+        userID, ok = QInputDialog.getText(self, "CUID", "CUID (blank for all CUID\'s):")
 
         if not ok:
             # The show visits thread was not declared yet so just skip the closeShowvisitsScreen function
@@ -404,12 +406,14 @@ class MainWnd(QMainWindow):
       
         # Init the show visits thread
         # userID will be used in SQL queries. Sanitize it.
-        self.showVisitsThread = ShowVisitsThread(self.db, Utils.sanitizeInput(str(userID)), self.setVisits)
+        self.showVisitsThread = ShowVisitsThread(self.db, Utils.sanitizeInput(str(CUID)), self.setVisits)
         self.showVisitsThread.start()
 
 
     def closeCheckinScreen(self):
-        # End the checkin thread we started
+    #===========================================================================
+    # End the checkin thread we started
+    #===========================================================================
         if self.checkinThread is not None:
             self.checkinThread.terminate()
 
@@ -417,13 +421,17 @@ class MainWnd(QMainWindow):
 
    
     def closeShowVisitsScreen(self):
-        # End the show visits thread we started
+    #=======================================================================
+    # End the show visits thread we started
+    #=======================================================================
         self.showVisitsThread.terminate()
-
         self.showMainMenuWidget()
-
-
-    def postCardSwipe(self, checkinStatus, userID, cardID, sqlError, visitValue):
+        
+      
+    def postCardSwipe(self, checkinStatus, userID, CUID, sqlError, visitValue):
+    #===========================================================================
+    # Display results after a card is read - If new card poll for name
+    #===========================================================================
         if checkinStatus == c.SUCCESS:
             self.checkinImg.setPixmap(self.greenPix)
             self.checkinLabel.setText(str(userID) + " +" + str(visitValue) + " visits")
@@ -449,7 +457,7 @@ class MainWnd(QMainWindow):
                     # Sanitize the userID input and call the add card thread
                 
                     if ok and userID != "":
-                        self.addCardThread = AddCardThread(self.db, cardID, Utils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
+                        self.addCardThread = AddCardThread(self.db, CUID, Utils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
                         self.addCardThread.start()
                 
                 # Don't bother to change UI elements or start the sleep thread, just wait for the next card
