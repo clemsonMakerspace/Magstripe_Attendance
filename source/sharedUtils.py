@@ -20,17 +20,17 @@ import re
 import getpass  
 
 class Utils:
+    def __init__(self):
     #===========================================================================
     # Compile regex for CUID on Tiger One card. Do this here to avoid duplicates
     #===========================================================================
-    def __init__(self):
         self.regex = re.compile("%(.+)..\?;")
     
     
+    def sanitizeInput(self, input):
     #===========================================================================
     # Sanitize inputs to save your database
     #===========================================================================
-    def sanitizeInput(self, input):
         # Keep a copy of the possibly mixed-case input
         origInput = input
         input.upper()
@@ -48,10 +48,10 @@ class Utils:
         return origInput
     
     
+    def getCardSwipe(self):
     #===========================================================================
     # Listen for card swipe as a password and then regex it for CUID
     #===========================================================================
-    def getCardSwipe(self):
         # Read the card data as a password so it doesn't show on the screen
         cardID = self.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
         try:
