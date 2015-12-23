@@ -107,7 +107,7 @@ class TextUI:
     def checkIn(self):
         # Get and validate the visit value for this check-in
         # Limited to 500 visits to prevent bad typos
-        while 1:
+        """while 1:
             visitValue = self.tools.sanitizeInput(input("\nVisit Value (" + str(c.DEFAULT_VISITS) + "): "))
 
             # Validate visit input
@@ -117,7 +117,7 @@ class TextUI:
             elif (visitValue.isdigit() and int(visitValue) <= 500) or visitValue == "back":
                 break
             else:
-                print("Invalid input. Try again.")
+                print("Invalid input. Try again.")"""
 
         while 1:
             CUID = self.tools.getCardSwipe()
@@ -135,7 +135,7 @@ class TextUI:
                 continue
 
             # Do the checkIn
-            checkInResult = self.db.checkIn(CUID, visitValue)
+            checkInResult = self.db.checkIn(CUID)
 
             if checkInResult["checkInStatus"] == c.SQL_ERROR:
                 self.showDatabaseError(checkInResult["sqlError"])
@@ -154,14 +154,14 @@ class TextUI:
             userID = self.tools.sanitizeInput(input("User ID: "))
 
             # Add the card
-            addCardResult = self.db.addCard(CUID, userID, visitValue)
+            addCardResult = self.db.addCard(CUID, userID)
 
             if addCardResult["addCardStatus"] == c.SUCCESS:
-                self.showCheckinConfirmation(userID, visitValue)
+                self.showCheckinConfirmation(userID)
             elif addCardResult["addCardStatus"] == c.SQL_ERROR:
                 self.showDatabaseError(addCardResult["sqlError"])
             elif checkInResult["checkInStatus"] == c.SUCCESS:
-                self.showCheckinConfirmation(checkInResult["userID"], visitValue)
+                self.showCheckinConfirmation(checkInResult["userID"])
             else:
                 print("Unknown error checking in.")
                 
@@ -219,8 +219,8 @@ class TextUI:
                 break
 
 
-    def showCheckinConfirmation(self, userID, visitValue):
-        print("%s +%s visits" % (userID, visitValue))
+    def showCheckinConfirmation(self, userID):
+        print("%s +%s visits" % (userID))
 
 
     def showDatabaseError(self, error):

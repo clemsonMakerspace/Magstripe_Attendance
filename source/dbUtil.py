@@ -81,7 +81,7 @@ class DB:
 
         return {"addCardStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}
 
-    def checkIn(self, CUID, visits):
+    def checkIn(self, CUID):
         # Init some stuff that could cause problems if not initialized
         status = c.FAILURE
         userID = None
@@ -111,7 +111,7 @@ class DB:
 
             if status == c.SUCCESS:
                 # Update the database with the new visits         
-                cursor.execute("""UPDATE %s SET visits=visits+%s WHERE CUID=\'%s\';""" % (self.dbTable, visits, CUID))
+                cursor.execute("""UPDATE %s SET CUID=\'%s\';""" % (self.dbTable, CUID))
                 # Grab the user ID that just checked-in to print confirmation
                 cursor.execute("""SELECT userID FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
 
