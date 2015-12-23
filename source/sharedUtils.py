@@ -17,12 +17,13 @@
 #===============================================================================
 
 import re
-import getpass
+import getpass  
 
 class Utils:
+    #===========================================================================
+    # Compile regex for CUID on Tiger One card. Do this here to avoid duplicates
+    #===========================================================================
     def __init__(self):
-        # Compile the regex for pulling the card ID from all the data on a card
-        # Do this here so it isn't done multiple times in the functions below
         self.regex = re.compile("%(.+)..\?;")
     
     
