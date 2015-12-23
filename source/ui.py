@@ -424,41 +424,39 @@ class MainWnd(QMainWindow):
 
 
     def postCardSwipe(self, checkinStatus, userID, cardID, sqlError, visitValue):
-        if checkinStatus == c.SQL_ERROR:
-            QMessageBox.critical(self, "Database Error", "WARNING! Database error: " + sqlError.args[1], QMessageBox.Ok, QMessageBox.Ok)
-            # Don't bother to change UI elements or start the sleep thread, just wait for the next card
-            return
-        elif checkinStatus == c.ERROR_READING_CARD:
-            self.checkinImg.setPixmap(self.redPix)
-            self.checkinLabel.setText("Error reading card. Swipe again.")
-        elif checkinStatus == c.BAD_CHECKIN_TIME:
-            self.checkinImg.setPixmap(self.redPix)
-            self.checkinLabel.setText("You may only check-in once per hour.")
-        elif checkinStatus == c.FUTURE_CHECKIN_TIME:
-            self.checkinImg.setPixmap(self.redPix)
-            self.checkinLabel.setText("Previous check-in time was in the future. Check your local system time.")
-        elif checkinStatus == c.SUCCESS:
+        if checkinStatus == c.SUCCESS:
             self.checkinImg.setPixmap(self.greenPix)
             self.checkinLabel.setText(str(userID) + " +" + str(visitValue) + " visits")
-        elif checkinStatus == c.CARD_NOT_IN_DB:
-            # If the card is not in the DB ask to add it
-            reply = QMessageBox.question(self, "Card Not in Database", "This card was not found in the database. Add it now?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-
-            if reply == QMessageBox.Yes:
-                # If adding new card, get the userID associated with the card
-                userID, ok = QInputDialog.getText(self, "Add New Card", "User ID:")
-
-                # Sanitize the userID input and call the add card thread
-                if ok and userID != "":
-                    self.addCardThread = AddCardThread(self.db, cardID, Utils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
-                    self.addCardThread.start()
-
-            # Don't bother to change UI elements or start the sleep thread, just wait for the next card
-            return
+        elif checkinStatus == c.SQL_ERROR:
+                QMessageBox.critical(self, "Database Error", "WARNING! Database error: " + sqlError.args[1], QMessageBox.Ok, QMessageBox.Ok)
+                # Don't bother to change UI elements or start the sleep thread, just wait for the next card
+                return
         else:
             self.checkinImg.setPixmap(self.redPix)
-            self.checkinLabel.setText("An unknown error occurred.")
-            QMessageBox.critical(self, "Unknown Error", "An unknown error occurred", QMessageBox.Ok, QMessageBox.Ok)
+            if checkinStatus == c.ERROR_READING_CARD:
+                self.checkinLabel.setText("Error reading card. Swipe again.")
+            elif checkinStatus == c.BAD_CHECKIN_TIME:
+                self.checkinLabel.setText("You may only check-in once per hour.")
+            elif checkinStatus == c.FUTURE_CHECKIN_TIME:
+                self.checkinLabel.setText("Previous check-in time was in the future. Check your local system time.")
+            elif checkinStatus == c.CARD_NOT_IN_DB:
+                # If the card is not in the DB ask to add it
+                reply = QMessageBox.question(self, "Card Not in Database", "This card was not found in the database. Add it now?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+                if reply == QMessageBox.Yes:
+                    # If adding new card, get the userID associated with the card
+                    userID, ok = QInputDialog.getText(self, "Add New Card", "User ID:")
+                    # Sanitize the userID input and call the add card thread
+                
+                    if ok and userID != "":
+                        self.addCardThread = AddCardThread(self.db, cardID, Utils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
+                        self.addCardThread.start()
+                
+                # Don't bother to change UI elements or start the sleep thread, just wait for the next card
+                return
+            else:
+                self.checkinLabel.setText("An unknown error occurred.")
+                QMessageBox.critical(self, "Unknown Error", "An unknown error occurred", QMessageBox.Ok, QMessageBox.Ok)
 
         # Force a repaint of the UI
         self.checkinImg.update()
