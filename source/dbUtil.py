@@ -61,7 +61,7 @@ class DB:
         if self.dbConn is not None:
             self.dbConn.close()
 
-    def addCard(self, CUID, userID, initialVisits):
+    def addCard(self, CUID, userID):
         # Init some stuff that could cause problems if not initialized
         sqlError = None
         # Get a cursor to the DB
@@ -69,7 +69,7 @@ class DB:
       
         try:
             # Add the new record into the DB
-            cursor.execute("""INSERT INTO %s (CUID, userID, visits) values (\'%s\', \'%s\', %s);""" % (self.dbTable, CUID, userID, initialVisits))
+            cursor.execute("""INSERT INTO %s (CUID, name) values (\'%s\', \'%s');""" % (self.dbTable, CUID, userID))
             status = c.SUCCESS
         
         except psycopg2.Error as e:
@@ -113,7 +113,7 @@ class DB:
                 # Update the database with the new visits         
                 cursor.execute("""UPDATE %s SET CUID=\'%s\';""" % (self.dbTable, CUID))
                 # Grab the user ID that just checked-in to print confirmation
-                cursor.execute("""SELECT userID FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
+                cursor.execute("""SELECT name FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
 
                 userID = cursor.fetchone()[0]
         except psycopg2.Error as e:
@@ -137,14 +137,14 @@ class DB:
         if lastCheckIn and datetime.date(curDate) == datetime.date(lastCheckIn):
             tmzAdjust = 0
          
-        # Check that the current system time is at least one hour greater than the last check-in time
-        if (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckIn).hour or
-            (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckIn).hour+1 and
-            datetime.time(curDate).minute < datetime.time(lastCheckIn).minute)):
-            return c.BAD_CHECKIN_TIME
-        # If the current system time is before the check-in time, do not allow check-in
-        elif datetime.time(curDate).hour+tmzAdjust < datetime.time(lastCheckIn).hour:
-            return c.FUTURE_CHECKIN_TIME
+            # Check that the current system time is at least one hour greater than the last check-in time
+            if (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckIn).hour or
+                (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckIn).hour+1 and
+                datetime.time(curDate).minute < datetime.time(lastCheckIn).minute)):
+                return c.BAD_CHECKIN_TIME
+            # If the current system time is before the check-in time, do not allow check-in
+            elif datetime.time(curDate).hour+tmzAdjust < datetime.time(lastCheckIn).hour:
+                return c.FUTURE_CHECKIN_TIME
         # If the current system date is before the check-in date, do not allow check-in
         elif lastCheckIn and datetime.date(curDate) < datetime.date(lastCheckIn):
             return c.FUTURE_CHECKIN_TIME

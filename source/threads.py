@@ -80,7 +80,7 @@ class CheckinThread(QThread):
 
 
 class AddCardThread(QThread):
-    cardAddedSignal = pyqtSignal(int, str, str, object, str)
+    cardAddedSignal = pyqtSignal(int, str, str, str)
 
     def __init__(self, db, CUID, userID, pointValue, cardAddedCallback):
         super(AddCardThread, self).__init__()
@@ -94,13 +94,13 @@ class AddCardThread(QThread):
 
    
     def run(self):
-        addCardResult = self.db.addCard(self.CUID, self.userID, self.pointValue)
+        addCardResult = self.db.addCard(self.CUID, self.userID)
 
         # Don't send nonetype's through signals
         if addCardResult['sqlError'] is None:
             addCardResult['sqlError'] = object()
 
-        self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["CUID"], addCardResult["sqlError"], self.pointValue)
+        self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["CUID"], addCardResult["sqlError"])
 
 
 class ShowVisitsThread(QThread):

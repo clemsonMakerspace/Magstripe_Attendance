@@ -44,9 +44,9 @@ class TextUI:
                 # If we failed to connect to the database offer to re-enter db info
                 if connectStatus != c.SUCCESS:
                     reenter = input("Failed to connect to database. Re-enter database info? (Y,n) ")
-                if reenter.lower() == "n":
-                    print("Bye.")
-                    sys.exit(0)
+                    if reenter.lower() == "n":
+                        print("Bye.")
+                        sys.exit(0)
                 else:
                     break
 
@@ -147,8 +147,8 @@ class TextUI:
                 # Ask if user wants to add the card
                 addCard = input("Error: Card not found in database. Add it now? (Y,n) ")
             
-            if addCard == "n":
-                continue
+                if addCard == "n":
+                    continue
             
             # Get the userID for the new card
             userID = self.tools.sanitizeInput(input("User ID: "))
@@ -190,9 +190,9 @@ class TextUI:
 
 
     def getDbInfo(self):
-        self.dbHost = input("Database name: (" + c.DEFAULT_DATABASE + ") ")
+        self.dbName = input("Database name: (" + c.DEFAULT_DATABASE + ") ")
 
-        if self.dbHost == "":
+        if self.dbName == "":
             self.dbName = c.DEFAULT_DATABASE
             
         self.dbHost = input("Database host: (" + c.DEFAULT_HOST + ") ")
@@ -220,11 +220,11 @@ class TextUI:
 
 
     def showCheckinConfirmation(self, userID):
-        print("%s +%s visits" % (userID))
+        print("%s is checked in" % (userID))
 
 
     def showDatabaseError(self, error):
-        print("\nWARNING! Database error:\n%s" % (error.args[1]))
+        print("\nWARNING! Database error:\n%s" % error.pgerror)
 
 
     def invalidInput(self):

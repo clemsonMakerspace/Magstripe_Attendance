@@ -399,7 +399,7 @@ class MainWnd(QMainWindow):
         self.centralWidget.setCurrentWidget(self.visitsWidget)
 
         # Get the user ID to show visits for or an empty string for all user ID's
-        userID, ok = QInputDialog.getText(self, "CUID", "CUID (blank for all CUID\'s):")
+        CUID, ok = QInputDialog.getText(self, "CUID", "CUID (blank for all CUID\'s):")
 
         if not ok:
             # The show visits thread was not declared yet so just skip the closeShowvisitsScreen function
@@ -407,7 +407,7 @@ class MainWnd(QMainWindow):
       
         # Init the show visits thread
         # userID will be used in SQL queries. Sanitize it.
-        self.showVisitsThread = ShowVisitsThread(self.db, Utils.sanitizeInput(str(CUID)), self.setVisits)
+        self.showVisitsThread = ShowVisitsThread(self.db, Utils.sanitizeInput(CUID), self.setVisits)
         self.showVisitsThread.start()
 
 
@@ -429,15 +429,15 @@ class MainWnd(QMainWindow):
         self.showMainMenuWidget()
         
       
-    def postCardSwipe(self, checkinStatus, userID, CUID, sqlError, visitValue):
+    def postCardSwipe(self, checkinStatus, userID, CUID, sqlError):
     #===========================================================================
     # Display results after a card is read - If new card poll for name
     #===========================================================================
         if checkinStatus == c.SUCCESS:
             self.checkinImg.setPixmap(self.greenPix)
-            self.checkinLabel.setText(str(userID) + " +" + str(visitValue) + " visits")
+            self.checkinLabel.setText(str(userID))
         elif checkinStatus == c.SQL_ERROR:
-                QMessageBox.critical(self, "Database Error", "WARNING! Database error: " + sqlError.args[1], QMessageBox.Ok, QMessageBox.Ok)
+                QMessageBox.critical(self, "Database Error", "WARNING! Database error: " + sqlError.pgerror, QMessageBox.Ok, QMessageBox.Ok)
                 # Don't bother to change UI elements or start the sleep thread, just wait for the next card
                 return
         else:
@@ -445,7 +445,7 @@ class MainWnd(QMainWindow):
             if checkinStatus == c.ERROR_READING_CARD:
                 self.checkinLabel.setText("Error reading card. Swipe again.")
             elif checkinStatus == c.BAD_CHECKIN_TIME:
-                self.checkinLabel.setText("You may only check-in once per hour.")
+                self.checkinLabel.setText("Yoau may only check-in once per hour.")
             elif checkinStatus == c.FUTURE_CHECKIN_TIME:
                 self.checkinLabel.setText("Previous check-in time was in the future. Check your local system time.")
             elif checkinStatus == c.CUID_NOT_IN_DB:
@@ -458,7 +458,7 @@ class MainWnd(QMainWindow):
                     # Sanitize the userID input and call the add card thread
                 
                     if ok and userID != "":
-                        self.addCardThread = AddCardThread(self.db, CUID, Utils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
+                        self.addCardThread = AddCardThread(self.db, CUID, Utils.sanitizeInput(str(userID)), self.postCardSwipe)
                         self.addCardThread.start()
                 
                 # Don't bother to change UI elements or start the sleep thread, just wait for the next card

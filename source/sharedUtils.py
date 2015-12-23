@@ -17,7 +17,8 @@
 #===============================================================================
 
 import re
-import getpass  
+import getpass
+import constants as c
 
 class Utils:
     def __init__(self):
