@@ -80,13 +80,12 @@ class CheckinThread(QThread):
 
 
 class AddCardThread(QThread):
-    cardAddedSignal = pyqtSignal(int, str, str, str)
+    cardAddedSignal = pyqtSignal(int, str, str, object)
 
-    def __init__(self, db, CUID, userID, pointValue, cardAddedCallback):
+    def __init__(self, db, CUID, userID, cardAddedCallback):
         super(AddCardThread, self).__init__()
 
         self.db = db
-        self.pointValue = str(pointValue)
         self.CUID = CUID
         self.userID = userID
 
