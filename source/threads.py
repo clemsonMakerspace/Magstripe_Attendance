@@ -55,53 +55,53 @@ class CheckinThread(QThread):
 
         self.db = db
         self.pointValue = str(pointValue)
-        self.cardID = None
+        self.CUID = None
 
         self.postCardSwipeSignal.connect(postCardSwipeCallback)
 
 
-    def setCardID(self, cardID):
-        self.cardID = cardID
+    def setCardID(self, CUID):
+        self.CUID = CUID
    
     def run(self):
         # Warning: setCardID() must have been called before starting this thread
 
         # At least make sure the card ID is of the right length. Not much more validation can be done.
-        if len(self.cardID) != 16:
+        if len(self.CUID) != 16:
             self.postCardSwipeSignal.emit(c.ERROR_READING_CARD, '', '', object(), self.pointValue)
             return
       
-        checkinResult = self.db.checkin(self.cardID, self.pointValue)
+        checkinResult = self.db.checkin(self.CUID, self.pointValue)
 
         # Don't pass nonetype's through signals expecting an object or seg faults happen
         if checkinResult["sqlError"] is None:
             checkinResult["sqlError"] = object()
 
-        self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["userID"], checkinResult["cardID"], checkinResult["sqlError"], self.pointValue)
+        self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["userID"], checkinResult["CUID"], checkinResult["sqlError"], self.pointValue)
 
 
 class AddCardThread(QThread):
     cardAddedSignal = pyqtSignal(int, str, str, object, str)
 
-    def __init__(self, db, cardID, userID, pointValue, cardAddedCallback):
+    def __init__(self, db, CUID, userID, pointValue, cardAddedCallback):
         super(AddCardThread, self).__init__()
 
         self.db = db
         self.pointValue = str(pointValue)
-        self.cardID = cardID
+        self.CUID = CUID
         self.userID = userID
 
         self.cardAddedSignal.connect(cardAddedCallback)
 
    
     def run(self):
-        addCardResult = self.db.addCard(self.cardID, self.userID, self.pointValue)
+        addCardResult = self.db.addCard(self.CUID, self.userID, self.pointValue)
 
         # Don't send nonetype's through signals
         if addCardResult['sqlError'] is None:
             addCardResult['sqlError'] = object()
 
-        self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["cardID"], addCardResult["sqlError"], self.pointValue)
+        self.cardAddedSignal.emit(addCardResult["addCardStatus"], addCardResult["userID"], addCardResult["CUID"], addCardResult["sqlError"], self.pointValue)
 
 
 class ShowVisitsThread(QThread):

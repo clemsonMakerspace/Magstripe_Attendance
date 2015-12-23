@@ -53,13 +53,13 @@ class Utils:
     # Listen for card swipe as a password and then regex it for CUID
     #===========================================================================
         # Read the card data as a password so it doesn't show on the screen
-        cardID = self.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
+        CUID = self.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
         try:
             # Return the card ID
-            return self.regex.search(cardID).group(1)
+            return self.regex.search(CUID).group(1)
         except AttributeError:
             # If exit or back, just return to go back
-            if "exit" in cardID or "back" in cardID:
+            if "exit" in CUID or "back" in CUID:
                 return c.BACK
             # Else card read error or not a Tiger One Card
             else:

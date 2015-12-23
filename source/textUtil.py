@@ -120,22 +120,22 @@ class TextUI:
                 print("Invalid input. Try again.")
 
         while 1:
-            cardID = self.tools.getCardSwipe()
+            CUID = self.tools.getCardSwipe()
             # If the user requested to exit the loop, break
-            if cardID == c.BACK:
+            if CUID == c.BACK:
                 break
-            elif cardID == c.ERROR_READING_CARD:
+            elif CUID == c.ERROR_READING_CARD:
                 print("Error reading card. Swipe card again.")
                 continue
 
-            # Sanitize cardID
-            cardID = self.tools.sanitizeInput(cardID)
-            # cardID will be empty if it failed sanitization. Skip checkIn if that is the case
-            if cardID == "":
+            # Sanitize CUID
+            CUID = self.tools.sanitizeInput(CUID)
+            # CUID will be empty if it failed sanitization. Skip checkIn if that is the case
+            if CUID == "":
                 continue
 
             # Do the checkIn
-            checkInResult = self.db.checkIn(cardID, visitValue)
+            checkInResult = self.db.checkIn(CUID, visitValue)
 
             if checkInResult["checkInStatus"] == c.SQL_ERROR:
                 self.showDatabaseError(checkInResult["sqlError"])
@@ -154,7 +154,7 @@ class TextUI:
             userID = self.tools.sanitizeInput(input("User ID: "))
 
             # Add the card
-            addCardResult = self.db.addCard(cardID, userID, visitValue)
+            addCardResult = self.db.addCard(CUID, userID, visitValue)
 
             if addCardResult["addCardStatus"] == c.SUCCESS:
                 self.showCheckinConfirmation(userID, visitValue)

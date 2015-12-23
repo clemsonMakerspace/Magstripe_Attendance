@@ -61,7 +61,7 @@ class DB:
         if self.dbConn is not None:
             self.dbConn.close()
 
-    def addCard(self, cardID, userID, initialVisits):
+    def addCard(self, CUID, userID, initialVisits):
         # Init some stuff that could cause problems if not initialized
         sqlError = None
         # Get a cursor to the DB
@@ -69,7 +69,7 @@ class DB:
       
         try:
             # Add the new record into the DB
-            cursor.execute("""INSERT INTO %s (cardID, userID, visits) values (\'%s\', \'%s\', %s);""" % (self.dbTable, cardID, userID, initialVisits))
+            cursor.execute("""INSERT INTO %s (CUID, userID, visits) values (\'%s\', \'%s\', %s);""" % (self.dbTable, CUID, userID, initialVisits))
             status = c.SUCCESS
         
         except psycopg2.Error as e:
@@ -79,9 +79,9 @@ class DB:
         finally:
             cursor.close()
 
-        return {"addCardStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
+        return {"addCardStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}
 
-    def checkIn(self, cardID, visits):
+    def checkIn(self, CUID, visits):
         # Init some stuff that could cause problems if not initialized
         status = c.FAILURE
         userID = None
@@ -92,7 +92,7 @@ class DB:
 
         try:
             # Get the last check-in time
-            cursor.execute("""SELECT last_checkIn FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
+            cursor.execute("""SELECT last_checkIn FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
 
             # Ensure that the card is in the database
             if cursor.rowcount == 0:
@@ -111,9 +111,9 @@ class DB:
 
             if status == c.SUCCESS:
                 # Update the database with the new visits         
-                cursor.execute("""UPDATE %s SET visits=visits+%s WHERE cardID=\'%s\';""" % (self.dbTable, visits, cardID))
+                cursor.execute("""UPDATE %s SET visits=visits+%s WHERE CUID=\'%s\';""" % (self.dbTable, visits, CUID))
                 # Grab the user ID that just checked-in to print confirmation
-                cursor.execute("""SELECT userID FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
+                cursor.execute("""SELECT userID FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
 
                 userID = cursor.fetchone()[0]
         except psycopg2.Error as e:
@@ -125,7 +125,7 @@ class DB:
         finally:
             cursor.close()
 
-        return {"checkInStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
+        return {"checkInStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}
 
    
     def checkCheckInTime(self, lastCheckIn):
