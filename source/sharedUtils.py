@@ -16,21 +16,52 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 #===============================================================================
 
-# Even though MySQLdb performs input sanitization internally, 
-# it doesn't hurt to do it oursevles just to be on the safe side
-def sanitizeInput(input):
-    # Keep a copy of the possibly mixed-case input
-    origInput = input
-    input.upper()
+import re
+import getpass
 
-    # The reserved words to check for
-    # There are many more, of course, but these should thwart the most dangerous attacks
-    keywords = ["DELETE", "UPDATE", "DROP", "CREATE", "SELECT", "INSERT", "ALTER"]
+class Utils:
+    def __init__(self):
+        # Compile the regex for pulling the card ID from all the data on a card
+        # Do this here so it isn't done multiple times in the functions below
+        self.regex = re.compile("%(.+)..\?;")
+    
+    
+    #===========================================================================
+    # Sanitize inputs to save your database
+    #===========================================================================
+    def sanitizeInput(self, input):
+        # Keep a copy of the possibly mixed-case input
+        origInput = input
+        input.upper()
+
+        # The reserved words to check for
+        # There are many more, of course, but these should thwart the most dangerous attacks
+        keywords = ["DELETE", "UPDATE", "DROP", "CREATE", "SELECT", "INSERT", "ALTER"]
   
-    # Check for a match
-    for i in keywords:
-        if i in input:
-            return ""
+        # Check for a match
+        for i in keywords:
+            if i in input:
+                return ""
      
-    # If no match, return the original input
-    return origInput
+        # If no match, return the original input
+        return origInput
+    
+    
+    #===========================================================================
+    # Listen for card swipe as a password and then regex it for CUID
+    #===========================================================================
+    def getCardSwipe(self):
+        # Read the card data as a password so it doesn't show on the screen
+        cardID = self.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
+        try:
+            # Return the card ID
+            return self.regex.search(cardID).group(1)
+        except AttributeError:
+            # If exit or back, just return to go back
+            if "exit" in cardID or "back" in cardID:
+                return c.BACK
+            # Else, a match wasn't found which probably means there was
+            # ann error reading the card or the card isn't a Tiger One card
+            # but assume the former
+            else:
+                return c.ERROR_READING_CARD
