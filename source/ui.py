@@ -198,6 +198,7 @@ class MainWnd(QMainWindow):
         super(MainWnd, self).__init__()
 
         self.db = db
+        self.tools = Utils()
 
         # Init card input so it can be appended to later
         self.cardInput = ""
@@ -407,7 +408,7 @@ class MainWnd(QMainWindow):
       
         # Init the show visits thread
         # userID will be used in SQL queries. Sanitize it.
-        self.showVisitsThread = ShowVisitsThread(self.db, Utils.sanitizeInput(CUID), self.setVisits)
+        self.showVisitsThread = ShowVisitsThread(self.db, self.tools.sanitizeInput(str(CUID)), self.setVisits)
         self.showVisitsThread.start()
 
 
@@ -458,7 +459,7 @@ class MainWnd(QMainWindow):
                     # Sanitize the userID input and call the add card thread
                 
                     if ok and userID != "":
-                        self.addCardThread = AddCardThread(self.db, CUID, Utils.sanitizeInput(str(userID)), self.postCardSwipe)
+                        self.addCardThread = AddCardThread(self.db, CUID, self.tools.sanitizeInput(userID), self.postCardSwipe)
                         self.addCardThread.start()
                 
                 # Don't bother to change UI elements or start the sleep thread, just wait for the next card
