@@ -75,7 +75,7 @@ class TextUI:
                 option = input("\n>> ")
 
                 if option == "1":
-                    self.checkin()
+                    self.checkIn()
                 elif option == "2":
                     self.showVisits()
                 elif option == "3":
@@ -108,7 +108,7 @@ class TextUI:
             return c.FAILURE
 
 
-    def checkin(self):
+    def checkIn(self):
         # Get and validate the visit value for this check-in
         # Limited to 500 visits to prevent bad typos
         while 1:
@@ -125,7 +125,6 @@ class TextUI:
 
         while 1:
             cardID = self.getCardSwipe()
-            print(cardID)
             # If the user requested to exit the loop, break
             if cardID == c.BACK:
                 break
@@ -135,20 +134,20 @@ class TextUI:
 
             # Sanitize cardID
             cardID = sharedUtils.sanitizeInput(cardID)
-            # cardID will be empty if it failed sanitization. Skip checkin if that is the case
+            # cardID will be empty if it failed sanitization. Skip checkIn if that is the case
             if cardID == "":
                 continue
 
-            # Do the checkin
-            checkinResult = self.db.checkin(cardID, visitValue)
+            # Do the checkIn
+            checkInResult = self.db.checkIn(cardID, visitValue)
 
-            if checkinResult["checkinStatus"] == c.SQL_ERROR:
-                self.showDatabaseError(checkinResult["sqlError"])
-            elif checkinResult["checkinStatus"] == c.BAD_CHECKIN_TIME:
+            if checkInResult["checkInStatus"] == c.SQL_ERROR:
+                self.showDatabaseError(checkInResult["sqlError"])
+            elif checkInResult["checkInStatus"] == c.BAD_CHECKIN_TIME:
                 print("Error: You may only check-in once per hour.")
-            elif checkinResult["checkinStatus"] == c.FUTURE_CHECKIN_TIME:
+            elif checkInResult["checkInStatus"] == c.FUTURE_CHECKIN_TIME:
                 print("Error: Previous check-in time was in the future. Check your local system time.")
-            elif checkinResult["checkinStatus"] == c.CARD_NOT_IN_DB:
+            elif checkInResult["checkInStatus"] == c.CARD_NOT_IN_DB:
                 # Ask if user wants to add the card
                 addCard = input("Error: Card not found in database. Add it now? (Y,n) ")
             
@@ -165,8 +164,8 @@ class TextUI:
                 self.showCheckinConfirmation(userID, visitValue)
             elif addCardResult["addCardStatus"] == c.SQL_ERROR:
                 self.showDatabaseError(addCardResult["sqlError"])
-            elif checkinResult["checkinStatus"] == c.SUCCESS:
-                self.showCheckinConfirmation(checkinResult["userID"], visitValue)
+            elif checkInResult["checkInStatus"] == c.SUCCESS:
+                self.showCheckinConfirmation(checkInResult["userID"], visitValue)
             else:
                 print("Unknown error checking in.")
                 
@@ -194,8 +193,6 @@ class TextUI:
                 print("\n%s has %s visits." % (userID, str(showVisitsResult["visitsTuple"][0][0])))
 
 
-    #def getCardSwipe(self):
-    #   input("\nWaiting for card swipe...")
     def getCardSwipe(self):
         # Read the card data as a password so it doesn't show on the screen
         cardID = sharedUtils.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
