@@ -32,7 +32,7 @@ class TextUI:
     def start(self):
         # Compile the regex for pulling the card ID from all the data on a card
         # Do this here so it isn't done multiple times in the functions below
-        self.regex = re.compile(";(.+)=")
+        self.regex = re.compile("%(.+)..\?;")
 
         try:
             while 1:
@@ -40,7 +40,7 @@ class TextUI:
                 self.getDbInfo()
 
                 # Create the DB object
-                self.db = DB(self.dbHost, c.DEFAULT_DATABASE, self.dbTable, self.dbUser, self.dbPass)
+                self.db = DB(self.dbHost, self.dbName, self.dbTable, self.dbUser, self.dbPass)
 
                 # Connect to the database
                 connectStatus = self.connectToDatabase()
@@ -66,7 +66,7 @@ class TextUI:
 
 
     def displayMenu(self):
-        print("\nType \"back\" at any time to go up a menu level.")
+        #print("\nType \"back\" at any time to go up a menu level.")
 
         while 1:
             # Display main menu
@@ -80,10 +80,10 @@ class TextUI:
                     self.showVisits()
                 elif option == "3":
                     sys.exit(0)
-                elif option == "back" or option == "exit":
-                    exit = input("Exit? (y,N) ")
-                if exit.lower() == "y":
-                    sys.exit(0)
+                #elif option == "back" or option == "exit":
+                #    exit = input("Exit? (y,N) ")
+                #    if exit.lower() == "y":
+                #        sys.exit(0)
                 else:
                     self.invalidInput()
 
@@ -125,7 +125,7 @@ class TextUI:
 
         while 1:
             cardID = self.getCardSwipe()
-
+            print(cardID)
             # If the user requested to exit the loop, break
             if cardID == c.BACK:
                 break
@@ -169,7 +169,7 @@ class TextUI:
                 self.showCheckinConfirmation(checkinResult["userID"], visitValue)
             else:
                 print("Unknown error checking in.")
-
+                
 
     def showVisits(self):
         userID = sharedUtils.sanitizeInput(input("\nUser ID (blank for all): "))
@@ -194,6 +194,8 @@ class TextUI:
                 print("\n%s has %s visits." % (userID, str(showVisitsResult["visitsTuple"][0][0])))
 
 
+    #def getCardSwipe(self):
+    #   input("\nWaiting for card swipe...")
     def getCardSwipe(self):
         # Read the card data as a password so it doesn't show on the screen
         cardID = sharedUtils.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
@@ -212,6 +214,11 @@ class TextUI:
 
 
     def getDbInfo(self):
+        self.dbHost = input("Database name: (" + c.DEFAULT_DATABASE + ") ")
+
+        if self.dbHost == "":
+            self.dbName = c.DEFAULT_DATABASE
+            
         self.dbHost = input("Database host: (" + c.DEFAULT_HOST + ") ")
 
         if self.dbHost == "":
