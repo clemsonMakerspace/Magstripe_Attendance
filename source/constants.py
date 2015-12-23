@@ -42,7 +42,7 @@ BAD_PASSWD = 2
 ERROR_READING_CARD = 11
 
 # Database errors
-CARD_NOT_IN_DB      = 3
+CUID_NOT_IN_DB      = 3
 BAD_CHECKIN_TIME    = 4
 FUTURE_CHECKIN_TIME = 5
 SQL_ERROR           = 6

@@ -96,7 +96,7 @@ class DB:
 
             # Ensure that the card is in the database
             if cursor.rowcount == 0:
-                status = c.CARD_NOT_IN_DB
+                status = c.CUID_NOT_IN_DB
                 # Raise a generic exception to break out of the try block
                 raise Exception
             else:

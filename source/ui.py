@@ -448,9 +448,9 @@ class MainWnd(QMainWindow):
                 self.checkinLabel.setText("You may only check-in once per hour.")
             elif checkinStatus == c.FUTURE_CHECKIN_TIME:
                 self.checkinLabel.setText("Previous check-in time was in the future. Check your local system time.")
-            elif checkinStatus == c.CARD_NOT_IN_DB:
+            elif checkinStatus == c.CUID_NOT_IN_DB:
                 # If the card is not in the DB ask to add it
-                reply = QMessageBox.question(self, "Card Not in Database", "This card was not found in the database. Add it now?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+                reply = QMessageBox.question(self, "CUID Not in Database", "This CUID was not found in the database. Add it now?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
                 if reply == QMessageBox.Yes:
                     # If adding new card, get the userID associated with the card

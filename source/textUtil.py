@@ -143,7 +143,7 @@ class TextUI:
                 print("Error: You may only check-in once per hour.")
             elif checkInResult["checkInStatus"] == c.FUTURE_CHECKIN_TIME:
                 print("Error: Previous check-in time was in the future. Check your local system time.")
-            elif checkInResult["checkInStatus"] == c.CARD_NOT_IN_DB:
+            elif checkInResult["checkInStatus"] == c.CUID_NOT_IN_DB:
                 # Ask if user wants to add the card
                 addCard = input("Error: Card not found in database. Add it now? (Y,n) ")
             
