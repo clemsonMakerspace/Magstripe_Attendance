@@ -21,7 +21,7 @@ import re
 import getpass
 
 from dbUtil import DB
-from Utils import Utils
+from sharedUtils import Utils
 import constants as c
 
 class TextUI:
