@@ -26,7 +26,7 @@ from PyQt5.QtCore import *
 
 from dbUtil import DB
 from threads import *
-import sharedUtils
+from sharedUtils import Utils
 import constants as c
 
 
@@ -255,7 +255,7 @@ class MainWnd(QMainWindow):
                 # Set the card ID and start the checkin thread
                 # cardID is going into an SQL query; don't forget to sanitize the input
                 if not (self.checkinThread.isRunning() and self.sleepThread.isRunning()):
-                    self.checkinThread.setCardID(sharedUtils.sanitizeInput(str(cardID)))
+                    self.checkinThread.setCardID(Utils.sanitizeInput(str(cardID)))
                     self.checkinThread.start()
 
             except AttributeError:
@@ -388,7 +388,7 @@ class MainWnd(QMainWindow):
       
         # Init the checkin thread
         # visitValue will be used in SQL queries. Sanitize it.
-        self.checkinThread = CheckinThread(self.db, sharedUtils.sanitizeInput(str(visitValue)), self.postCardSwipe)
+        self.checkinThread = CheckinThread(self.db, Utils.sanitizeInput(str(visitValue)), self.postCardSwipe)
 
    
     def showVisitsWidget(self):
@@ -404,7 +404,7 @@ class MainWnd(QMainWindow):
       
         # Init the show visits thread
         # userID will be used in SQL queries. Sanitize it.
-        self.showVisitsThread = ShowVisitsThread(self.db, sharedUtils.sanitizeInput(str(userID)), self.setVisits)
+        self.showVisitsThread = ShowVisitsThread(self.db, Utils.sanitizeInput(str(userID)), self.setVisits)
         self.showVisitsThread.start()
 
 
@@ -450,7 +450,7 @@ class MainWnd(QMainWindow):
 
                 # Sanitize the userID input and call the add card thread
                 if ok and userID != "":
-                    self.addCardThread = AddCardThread(self.db, cardID, sharedUtils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
+                    self.addCardThread = AddCardThread(self.db, cardID, Utils.sanitizeInput(str(userID)), visitValue, self.postCardSwipe)
                     self.addCardThread.start()
 
             # Don't bother to change UI elements or start the sleep thread, just wait for the next card

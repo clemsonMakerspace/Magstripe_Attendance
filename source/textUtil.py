@@ -21,7 +21,7 @@ import re
 import getpass
 
 from dbUtil import DB
-import sharedUtils
+from Utils import Utils
 import constants as c
 
 class TextUI:
@@ -30,10 +30,6 @@ class TextUI:
 
 
     def start(self):
-        # Compile the regex for pulling the card ID from all the data on a card
-        # Do this here so it isn't done multiple times in the functions below
-        self.regex = re.compile("%(.+)..\?;")
-
         try:
             while 1:
                 # Get DB info
@@ -112,7 +108,7 @@ class TextUI:
         # Get and validate the visit value for this check-in
         # Limited to 500 visits to prevent bad typos
         while 1:
-            visitValue = sharedUtils.sanitizeInput(input("\nVisit Value (" + str(c.DEFAULT_VISITS) + "): "))
+            visitValue = Utils.sanitizeInput(input("\nVisit Value (" + str(c.DEFAULT_VISITS) + "): "))
 
             # Validate visit input
             if visitValue == "":
@@ -124,7 +120,7 @@ class TextUI:
                 print("Invalid input. Try again.")
 
         while 1:
-            cardID = self.getCardSwipe()
+            cardID = Utils.getCardSwipe()
             # If the user requested to exit the loop, break
             if cardID == c.BACK:
                 break
@@ -133,7 +129,7 @@ class TextUI:
                 continue
 
             # Sanitize cardID
-            cardID = sharedUtils.sanitizeInput(cardID)
+            cardID = Utils.sanitizeInput(cardID)
             # cardID will be empty if it failed sanitization. Skip checkIn if that is the case
             if cardID == "":
                 continue
@@ -155,7 +151,7 @@ class TextUI:
                 continue
             
             # Get the userID for the new card
-            userID = sharedUtils.sanitizeInput(input("User ID: "))
+            userID = Utils.sanitizeInput(input("User ID: "))
 
             # Add the card
             addCardResult = self.db.addCard(cardID, userID, visitValue)
@@ -171,7 +167,7 @@ class TextUI:
                 
 
     def showVisits(self):
-        userID = sharedUtils.sanitizeInput(input("\nUser ID (blank for all): "))
+        userID = Utils.sanitizeInput(input("\nUser ID (blank for all): "))
         showVisitsResult = self.db.showVisits(userID)
 
         if showVisitsResult["showVisitsStatus"] == c.SQL_ERROR:
@@ -191,23 +187,6 @@ class TextUI:
             # Show a single user's visits
             else:
                 print("\n%s has %s visits." % (userID, str(showVisitsResult["visitsTuple"][0][0])))
-
-
-    def getCardSwipe(self):
-        # Read the card data as a password so it doesn't show on the screen
-        cardID = sharedUtils.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
-        try:
-            # Return the card ID
-            return self.regex.search(cardID).group(1)
-        except AttributeError:
-            # If exit or back, just return to go back
-            if "exit" in cardID or "back" in cardID:
-                return c.BACK
-            # Else, a match wasn't found which probably means there was
-            # and error reading the card or the card isn't a PSU ID card
-            # but assume the former
-            else:
-                return c.ERROR_READING_CARD
 
 
     def getDbInfo(self):
