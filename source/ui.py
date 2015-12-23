@@ -203,7 +203,7 @@ class MainWnd(QMainWindow):
         self.cardInput = ""
 
         # Compile the regex for pulling the card ID from all the data on a card
-        self.regex = re.compile(";([0-9]+)=[0-9]+\?")
+        self.regex = re.compile("%(.+)..\?;")
 
         # Declare sleepThread
         self.sleepThread = SleepThread(c.TIME_BETWEEN_CHECKINS, self.resetCheckinWidget)
@@ -257,7 +257,8 @@ class MainWnd(QMainWindow):
                 # Set the card ID and start the checkin thread
                 # CUID is going into an SQL query; don't forget to sanitize the input
                 if not (self.checkinThread.isRunning() and self.sleepThread.isRunning()):
-                    self.checkinThread.setCardID(Utils.sanitizeInput(str(CUID)))
+                    #self.checkinThread.setCUID(Utils.sanitizeInput(str(CUID)))
+                    self.checkinThread.setCUID(CUID)
                     self.checkinThread.start()
 
             except AttributeError:
@@ -375,7 +376,7 @@ class MainWnd(QMainWindow):
     def showCheckinWidget(self):
         self.centralWidget.setCurrentWidget(self.checkinWidget)
 
-        # Get the visit value
+        """# Get the visit value
         while 1:
             visitValue, ok = QInputDialog.getText(self, "Visit Value", "Visit Value:", text=str(c.DEFAULT_VISITS))
 
@@ -386,11 +387,11 @@ class MainWnd(QMainWindow):
                     QMessageBox.critical(self, "Input Error", "Invalid input", QMessageBox.Ok, QMessageBox.Ok)
             else:
                 self.closeCheckinScreen()
-                return
+                return"""
       
         # Init the checkin thread
         # visitValue will be used in SQL queries. Sanitize it.
-        self.checkinThread = CheckinThread(self.db, Utils.sanitizeInput(str(visitValue)), self.postCardSwipe)
+        self.checkinThread = CheckinThread(self.db, self.postCardSwipe)
 
    
     def showVisitsWidget(self):

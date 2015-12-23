@@ -48,36 +48,35 @@ class LoginThread(QThread):
 
 
 class CheckinThread(QThread):
-    postCardSwipeSignal = pyqtSignal(int, str, str, object, str)
+    postCardSwipeSignal = pyqtSignal(int, str, str, object)
 
-    def __init__(self, db, pointValue, postCardSwipeCallback):
+    def __init__(self, db, postCardSwipeCallback):
         super(CheckinThread, self).__init__()
 
         self.db = db
-        self.pointValue = str(pointValue)
         self.CUID = None
 
         self.postCardSwipeSignal.connect(postCardSwipeCallback)
 
 
-    def setCardID(self, CUID):
+    def setCUID(self, CUID):
         self.CUID = CUID
    
     def run(self):
-        # Warning: setCardID() must have been called before starting this thread
+        # Warning: setCUID() must have been called before starting this thread
 
         # At least make sure the card ID is of the right length. Not much more validation can be done.
-        if len(self.CUID) != 16:
-            self.postCardSwipeSignal.emit(c.ERROR_READING_CARD, '', '', object(), self.pointValue)
+        if len(self.CUID) != 9:
+            self.postCardSwipeSignal.emit(c.ERROR_READING_CARD, '', '', object())
             return
       
-        checkinResult = self.db.checkin(self.CUID, self.pointValue)
+        checkInResult = self.db.checkIn(self.CUID)
 
         # Don't pass nonetype's through signals expecting an object or seg faults happen
-        if checkinResult["sqlError"] is None:
-            checkinResult["sqlError"] = object()
+        if checkInResult["sqlError"] is None:
+            checkInResult["sqlError"] = object()
 
-        self.postCardSwipeSignal.emit(checkinResult["checkinStatus"], checkinResult["userID"], checkinResult["CUID"], checkinResult["sqlError"], self.pointValue)
+        self.postCardSwipeSignal.emit(checkInResult["checkInStatus"], checkInResult["userID"], checkInResult["CUID"], checkInResult["sqlError"])
 
 
 class AddCardThread(QThread):
