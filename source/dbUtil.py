@@ -81,7 +81,7 @@ class DB:
 
         return {"addCardStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
 
-    def checkin(self, cardID, visits):
+    def checkIn(self, cardID, visits):
         # Init some stuff that could cause problems if not initialized
         status = c.FAILURE
         userID = None
@@ -92,7 +92,7 @@ class DB:
 
         try:
             # Get the last check-in time
-            cursor.execute("""SELECT last_checkin FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
+            cursor.execute("""SELECT last_checkIn FROM %s WHERE cardID=\'%s\';""" % (self.dbTable, cardID))
 
             # Ensure that the card is in the database
             if cursor.rowcount == 0:
@@ -106,7 +106,7 @@ class DB:
             if c.ALLOW_CHECKIN_WITHIN_HOUR:
                 status = c.SUCCESS
             else:
-                status = self.checkCheckinTime(result[0])
+                status = self.checkCheckInTime(result[0])
 
 
             if status == c.SUCCESS:
@@ -125,28 +125,28 @@ class DB:
         finally:
             cursor.close()
 
-        return {"checkinStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
+        return {"checkInStatus": status, "userID": userID, "cardID": cardID, "sqlError": sqlError}
 
    
-    def checkCheckinTime(self, lastCheckin):
+    def checkCheckInTime(self, lastCheckIn):
         # Get the current date/time
         curDate = datetime.now()
 
-        # The last_checkin column was added after the DB was initially populated meaning it could be a NoneType
+        # The last_checkIn column was added after the DB was initially populated meaning it could be a NoneType
         # Only check the dates if this is not the case
-        if lastCheckin and datetime.date(curDate) == datetime.date(lastCheckin):
+        if lastCheckIn and datetime.date(curDate) == datetime.date(lastCheckIn):
             tmzAdjust = 0
          
         # Check that the current system time is at least one hour greater than the last check-in time
-        if (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckin).hour or
-            (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckin).hour+1 and
-            datetime.time(curDate).minute < datetime.time(lastCheckin).minute)):
+        if (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckIn).hour or
+            (datetime.time(curDate).hour+tmzAdjust == datetime.time(lastCheckIn).hour+1 and
+            datetime.time(curDate).minute < datetime.time(lastCheckIn).minute)):
             return c.BAD_CHECKIN_TIME
         # If the current system time is before the check-in time, do not allow check-in
-        elif datetime.time(curDate).hour+tmzAdjust < datetime.time(lastCheckin).hour:
+        elif datetime.time(curDate).hour+tmzAdjust < datetime.time(lastCheckIn).hour:
             return c.FUTURE_CHECKIN_TIME
         # If the current system date is before the check-in date, do not allow check-in
-        elif lastCheckin and datetime.date(curDate) < datetime.date(lastCheckin):
+        elif lastCheckIn and datetime.date(curDate) < datetime.date(lastCheckIn):
             return c.FUTURE_CHECKIN_TIME
         else:
             return c.SUCCESS
