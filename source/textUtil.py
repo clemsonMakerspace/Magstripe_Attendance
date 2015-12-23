@@ -17,7 +17,6 @@
 #===============================================================================
 
 import sys
-import re
 import getpass
 
 from dbUtil import DB
@@ -27,7 +26,8 @@ import constants as c
 class TextUI:
     def __init__(self):
         self.db = None
-
+        self.tools = Utils()
+        
 
     def start(self):
         try:
@@ -37,7 +37,7 @@ class TextUI:
 
                 # Create the DB object
                 self.db = DB(self.dbHost, self.dbName, self.dbTable, self.dbUser, self.dbPass)
-
+                
                 # Connect to the database
                 connectStatus = self.connectToDatabase()
 
@@ -108,7 +108,7 @@ class TextUI:
         # Get and validate the visit value for this check-in
         # Limited to 500 visits to prevent bad typos
         while 1:
-            visitValue = Utils.sanitizeInput(input("\nVisit Value (" + str(c.DEFAULT_VISITS) + "): "))
+            visitValue = self.tools.sanitizeInput(input("\nVisit Value (" + str(c.DEFAULT_VISITS) + "): "))
 
             # Validate visit input
             if visitValue == "":
@@ -120,7 +120,7 @@ class TextUI:
                 print("Invalid input. Try again.")
 
         while 1:
-            cardID = Utils.getCardSwipe()
+            cardID = self.tools.getCardSwipe()
             # If the user requested to exit the loop, break
             if cardID == c.BACK:
                 break
@@ -129,7 +129,7 @@ class TextUI:
                 continue
 
             # Sanitize cardID
-            cardID = Utils.sanitizeInput(cardID)
+            cardID = self.tools.sanitizeInput(cardID)
             # cardID will be empty if it failed sanitization. Skip checkIn if that is the case
             if cardID == "":
                 continue
@@ -151,7 +151,7 @@ class TextUI:
                 continue
             
             # Get the userID for the new card
-            userID = Utils.sanitizeInput(input("User ID: "))
+            userID = self.tools.sanitizeInput(input("User ID: "))
 
             # Add the card
             addCardResult = self.db.addCard(cardID, userID, visitValue)
@@ -167,7 +167,7 @@ class TextUI:
                 
 
     def showVisits(self):
-        userID = Utils.sanitizeInput(input("\nUser ID (blank for all): "))
+        userID = self.tools.sanitizeInput(input("\nUser ID (blank for all): "))
         showVisitsResult = self.db.showVisits(userID)
 
         if showVisitsResult["showVisitsStatus"] == c.SQL_ERROR:
