@@ -61,8 +61,6 @@ class Utils:
             # If exit or back, just return to go back
             if "exit" in cardID or "back" in cardID:
                 return c.BACK
-            # Else, a match wasn't found which probably means there was
-            # ann error reading the card or the card isn't a Tiger One card
-            # but assume the former
+            # Else card read error or not a Tiger One Card
             else:
                 return c.ERROR_READING_CARD
