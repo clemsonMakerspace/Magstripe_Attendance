@@ -38,6 +38,9 @@ class LoginThread(QThread):
 
    
     def run(self):
+    #===========================================================================
+    # Initialize db object and connect to database
+    #===========================================================================
         # Init the db object
         db = DB(self.dbHost, self.dbDatabase, self.dbTable, self.dbUser, self.dbPass)
 
@@ -60,9 +63,15 @@ class CheckinThread(QThread):
 
 
     def setCUID(self, CUID):
+    #===========================================================================
+    # set CUID
+    #===========================================================================
         self.CUID = CUID
    
     def run(self):
+    #===========================================================================
+    # Verify CUID card length, and attempt checkIn. Return results.
+    #===========================================================================
         # Warning: setCUID() must have been called before starting this thread
 
         # At least make sure the card ID is of the right length. Not much more validation can be done.
@@ -93,6 +102,9 @@ class AddCardThread(QThread):
 
    
     def run(self):
+    #===========================================================================
+    # Request additional data about new card then send to db
+    #===========================================================================
         addCardResult = self.db.addCard(self.CUID, self.userID)
 
         # Don't send nonetype's through signals
@@ -115,9 +127,15 @@ class ShowVisitsThread(QThread):
    
 
     def setUserID(self, userID):
+    #===========================================================================
+    # set User ID
+    #===========================================================================
         self.userID = userID
    
     def run(self):
+    #===========================================================================
+    # Connect to db and request visits information - then return
+    #===========================================================================
         showVisitsResult = self.db.showVisits(self.userID)
 
         # Don't send nonetype's through a signal or it gets angry and seg faults
@@ -140,11 +158,20 @@ class SleepThread(QThread):
 
 
     def setTime(self, time):
+    #===========================================================================
+    # set the time
+    #===========================================================================
         self.time = time
 
     def getTime(self):
+    #===========================================================================
+    # Get the time
+    #===========================================================================
         return self.time
 
     def run(self):
+    #===========================================================================
+    # Wait for an amount of time
+    #===========================================================================
         sleep(self.time)
         self.wakeupSignal.emit()
