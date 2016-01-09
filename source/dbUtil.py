@@ -42,7 +42,11 @@ class DB:
         self.dbUser = dbUser
         self.dbPass = dbPass
 
-    def connect(self):# If a password was not given, ask for it
+    def connect(self):
+    #===========================================================================
+    # Connect to db with given info - need to fix error system
+    #===========================================================================    
+        # If a password was not given, ask for it
         if self.dbPass == "":
             self.dbPass = getDbPass()
 
@@ -58,10 +62,16 @@ class DB:
 
 
     def close(self):
+    #===========================================================================
+    # Close out db connection
+    #===========================================================================
         if self.dbConn is not None:
             self.dbConn.close()
 
     def addCard(self, CUID, userID):
+    #===========================================================================
+    # add a CUID and userID to the database
+    #===========================================================================
         # Init some stuff that could cause problems if not initialized
         sqlError = None
         # Get a cursor to the DB
@@ -82,6 +92,9 @@ class DB:
         return {"addCardStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}
 
     def checkIn(self, CUID):
+    #===========================================================================
+    # Check in to db with CUID already in db
+    #===========================================================================
         # Init some stuff that could cause problems if not initialized
         status = c.FAILURE
         userID = None
@@ -129,6 +142,9 @@ class DB:
 
    
     def checkCheckInTime(self, lastCheckIn):
+    #===========================================================================
+    # Verifies that we are not checking into the past or the future
+    #===========================================================================
         # Get the current date/time
         curDate = datetime.now()
 
@@ -153,6 +169,9 @@ class DB:
 
 
     def showVisits(self, userID=""):
+    #===========================================================================
+    # Check visits associated with userID and return value
+    #===========================================================================
         # Init result and sqlError
         result = None
         sqlError = None
