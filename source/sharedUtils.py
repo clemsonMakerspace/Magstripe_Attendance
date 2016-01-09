@@ -51,7 +51,8 @@ class Utils:
     
     def getCardSwipe(self):
     #===========================================================================
-    # Listen for card swipe as a password and then regex it for CUID
+    # Read the card swipe as a password so it doesn't show on the screen
+    # Regex the card data to find CUID
     #===========================================================================
         # Read the card data as a password so it doesn't show on the screen
         CUID = self.sanitizeInput(getpass.getpass("\nWaiting for card swipe..."))
