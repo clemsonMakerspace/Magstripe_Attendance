@@ -48,6 +48,9 @@ class LoginWnd(QMainWindow):
       
         
     def initUI(self):
+    #===========================================================================
+    # Initialize login window UI
+    #===========================================================================    
         self.centralWidget = QWidget()
 
         # Create logo
@@ -142,10 +145,10 @@ class LoginWnd(QMainWindow):
         self.statusBar().showMessage("Not connected to server  |  " + c.GROUP_NAME + " Attendance Tracker Version " + str(c.VERSION))
 
 
-    #===========================================================================
-    # 
-    #===========================================================================
     def preLogin(self):
+    #===========================================================================
+    # Ensure settings are populated and then attempt to connect to db
+    #===========================================================================
         dbHost = str(self.hostEdit.text())
         dbTable = str(self.tableEdit.text())
         dbUser = str(self.userEdit.text())
@@ -175,6 +178,9 @@ class LoginWnd(QMainWindow):
 
 
     def postLogin(self, loginStatus, db):
+    #===========================================================================
+    # Check status of connection and take appropriate action
+    #===========================================================================
         # Close the connecting window
         self.connWnd.close()
 
@@ -213,6 +219,9 @@ class MainWnd(QMainWindow):
 
         
     def initUI(self):
+    #===========================================================================
+    # init main ui - allow for attendance logging and checking
+    #===========================================================================
         # Center the window
         # setGeometry args are x, y, width, height
         self.setGeometry(0, 0, 550, 100)
@@ -245,6 +254,9 @@ class MainWnd(QMainWindow):
 
    
     def keyPressEvent(self, event):
+    #===========================================================================
+    # Collect key data until regex matches - then reset and collect again
+    #===========================================================================
         # Only look for card swipes if the checkin widget is currently shown
         if self.centralWidget.currentWidget() == self.checkinWidget:
             try:
@@ -268,6 +280,9 @@ class MainWnd(QMainWindow):
 
 
     def closeEvent(self, closeEvent):
+    #===========================================================================
+    # Close database connection prior to closing application
+    #===========================================================================
         print("Cleaning up and exiting...")
         if self.db is not None:
             self.db.close()
@@ -275,6 +290,9 @@ class MainWnd(QMainWindow):
 
 
     def initMainMenuWidget(self):
+    #===========================================================================
+    # Initialize Main menu Widget
+    #===========================================================================
         self.mainMenuWidget = QWidget()
 
         checkinButton = QImageButton("Check-in", os.path.abspath('images/magnetic_card.png'), self.showCheckinWidget, 100, self)
@@ -291,6 +309,9 @@ class MainWnd(QMainWindow):
 
    
     def initCheckinWidget(self):
+    #===========================================================================
+    # Initialize Check In widget
+    #===========================================================================
         self.checkinWidget = QWidget()
 
         # Init widgets
@@ -341,6 +362,9 @@ class MainWnd(QMainWindow):
 
    
     def initShowVisitsWidget(self):
+    #===========================================================================
+    # Initialize visits widget
+    #===========================================================================
         self.visitsWidget = QWidget()
 
         self.checkinThread = None
@@ -371,10 +395,16 @@ class MainWnd(QMainWindow):
 
 
     def showMainMenuWidget(self):
+    #===========================================================================
+    # Show main menu widget
+    #===========================================================================
         self.centralWidget.setCurrentWidget(self.mainMenuWidget)
 
 
     def showCheckinWidget(self):
+    #===========================================================================
+    # Show Checkin Widget - used to request point value that is now depreciated
+    #===========================================================================
         self.centralWidget.setCurrentWidget(self.checkinWidget)
 
         """# Get the visit value
@@ -396,6 +426,9 @@ class MainWnd(QMainWindow):
 
    
     def showVisitsWidget(self):
+    #===========================================================================
+    # Show visits for certain CUID
+    #===========================================================================
         self.visitsTextArea.clear()
         self.centralWidget.setCurrentWidget(self.visitsWidget)
 
@@ -414,7 +447,7 @@ class MainWnd(QMainWindow):
 
     def closeCheckinScreen(self):
     #===========================================================================
-    # End the checkin thread we started
+    # Close checkinThread and return to Main Menu
     #===========================================================================
         if self.checkinThread is not None:
             self.checkinThread.terminate()
@@ -424,15 +457,16 @@ class MainWnd(QMainWindow):
    
     def closeShowVisitsScreen(self):
     #=======================================================================
-    # End the show visits thread we started
+    # Close visits thread and return to main menu
     #=======================================================================
-        self.showVisitsThread.terminate()
+        if self.checkinThread is not None:
+            self.showVisitsThread.terminate()
         self.showMainMenuWidget()
         
       
     def postCardSwipe(self, checkinStatus, userID, CUID, sqlError):
     #===========================================================================
-    # Display results after a card is read - If new card poll for name
+    # Display results after a card is read - If new card request name
     #===========================================================================
         if checkinStatus == c.SUCCESS:
             self.checkinImg.setPixmap(self.greenPix)
@@ -479,7 +513,9 @@ class MainWnd(QMainWindow):
       
             
     def resetCheckinWidget(self):
-        # Reset the UI for a new card swipe
+    #===========================================================================
+    # Reset the UI for a new card swipe
+    #===========================================================================
         self.checkinImg.setPixmap(self.cardPix)
         self.checkinLabel.setText("Waiting for card swipe...")
         self.checkinImg.update()
@@ -487,6 +523,9 @@ class MainWnd(QMainWindow):
 
    
     def setVisits(self, showVisitsStatus, visitsTuple, sqlError):
+    #===========================================================================
+    # Depreciated - removing visits setting
+    #===========================================================================
         if showVisitsStatus == c.NO_RESULTS:
             QMessageBox.critical(self, "Empty Query", "The specified user ID was not found in the database", QMessageBox.Ok, QMessageBox.Ok)
             return
@@ -508,7 +547,9 @@ class ConnectingWnd(QWidget):
       
         
     def initUI(self):
-        # Create connecting image
+    #===========================================================================
+    # Create connecting window
+    #===========================================================================
         connMov = QMovie(os.path.abspath("images/loading_icon.gif"))
         connMov.start()
         self.connImg = QLabel(self)
