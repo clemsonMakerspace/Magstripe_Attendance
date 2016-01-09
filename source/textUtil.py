@@ -30,6 +30,9 @@ class TextUI:
         
 
     def start(self):
+    #===========================================================================
+    # Main function - start connection to db then open main menu
+    #===========================================================================
         try:
             while 1:
                 # Get DB info
@@ -62,6 +65,9 @@ class TextUI:
 
 
     def displayMenu(self):
+    #===========================================================================
+    # Display main cli and take appropriate actions
+    #===========================================================================
         #print("\nType \"back\" at any time to go up a menu level.")
 
         while 1:
@@ -87,6 +93,9 @@ class TextUI:
                 self.invalidInput()
 
     def connectToDatabase(self):
+    #===========================================================================
+    # Open connection to database and return status
+    #===========================================================================
         # Use stdout.write to prevent newline
         sys.stdout.write("Connecting to database...")
 
@@ -105,6 +114,9 @@ class TextUI:
 
 
     def checkIn(self):
+    #===========================================================================
+    # Log card data to db
+    #===========================================================================
         # Get and validate the visit value for this check-in
         # Limited to 500 visits to prevent bad typos
         """while 1:
@@ -167,6 +179,9 @@ class TextUI:
                 
 
     def showVisits(self):
+    #===========================================================================
+    # Poll db for visit data based on userID
+    #===========================================================================
         userID = self.tools.sanitizeInput(input("\nUser ID (blank for all): "))
         showVisitsResult = self.db.showVisits(userID)
 
@@ -190,6 +205,9 @@ class TextUI:
 
 
     def getDbInfo(self):
+    #===========================================================================
+    # Request dbInfo from user - suggest default info from constants
+    #===========================================================================
         self.dbName = input("Database name: (" + c.DEFAULT_DATABASE + ") ")
 
         if self.dbName == "":
@@ -220,12 +238,21 @@ class TextUI:
 
 
     def showCheckinConfirmation(self, userID):
+    #===========================================================================
+    # show confirmation of successful check in
+    #===========================================================================
         print("%s is checked in" % (userID))
 
 
     def showDatabaseError(self, error):
+    #===========================================================================
+    # Warn of database error - and provide information
+    #===========================================================================
         print("\nWARNING! Database error:\n%s" % error.pgerror)
 
 
     def invalidInput(self):
+    #===========================================================================
+    # Complain about invalid input
+    #===========================================================================
         print("Invalid option. Try again.")
