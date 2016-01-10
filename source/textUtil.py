@@ -209,33 +209,27 @@ class TextUI:
     # Request dbInfo from user - suggest default info from constants
     #===========================================================================
         self.dbName = input("Database name: (" + c.DEFAULT_DATABASE + ") ")
-
         if self.dbName == "":
             self.dbName = c.DEFAULT_DATABASE
             
         self.dbHost = input("Database host: (" + c.DEFAULT_HOST + ") ")
-
         if self.dbHost == "":
             self.dbHost = c.DEFAULT_HOST
 
         self.dbUsersTable = input("Database User table: (" + c.TABLE_USERS + ") ")
-
         if self.dbUsersTable == "":
             self.dbUsersTable = c.TABLE_USERS
             
         self.dbVisitsTable = input("Database Visits table: (" + c.TABLE_VISITS + ") ")
-
         if self.dbVisitsTable == "":
             self.dbVisitsTable = c.TABLE_VISITS
 
         self.dbUser = input("Database Username: (" + c.DEFAULT_USER + ") ")
-
         if self.dbUser == "":
             self.dbUser = c.DEFAULT_USER
 
         while 1:
             self.dbPass = getpass.getpass("Database Password: ")
-
             if self.dbPass == "":
                 print("Database password cannot be blank.")
             else:
