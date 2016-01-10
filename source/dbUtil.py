@@ -129,7 +129,8 @@ class DB:
 
             if status == c.SUCCESS:
                 # Update the database with the new visits         
-                cursor.execute("""UPDATE %s SET CUID=\'%s\';""" % (self.dbTable, CUID))
+                cursor.execute("""UPDATE %s SET last_checkIN=\'%s\' WHERE CUID=\'%s\';""" % (self.dbTable, datetime.now(), CUID))
+                #cursor.execute("""UPDATE %s SET last_checkIn=\'%s\';""" % (self.dbTable, datetime.))
                 # Grab the user ID that just checked-in to print confirmation
                 cursor.execute("""SELECT name FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
 
