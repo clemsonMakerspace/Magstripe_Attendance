@@ -23,9 +23,10 @@ GROUP_INITIALS = "CMS"
 DEFAULT_HOST                = "localhost"
 DEFAULT_USER                = "test"
 DEFAULT_DATABASE            = "test"
-DEFAULT_TABLE               = "test"
+TABLE_USERS                 = "users"
+TABLE_VISITS                = "visits"
 DEFAULT_VISITS              = 0
-ALLOW_CHECKIN_WITHIN_HOUR   = 0
+ALLOW_CHECKIN_WITHIN_HOUR   = 1
 TIME_BETWEEN_CHECKINS       = 2 # In seconds
 
 # TextUtil constants

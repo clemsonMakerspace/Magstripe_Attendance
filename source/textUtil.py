@@ -218,10 +218,10 @@ class TextUI:
         if self.dbHost == "":
             self.dbHost = c.DEFAULT_HOST
 
-        self.dbTable = input("Database table: (" + c.DEFAULT_TABLE + ") ")
+        self.dbTable = input("Database table: (" + c.TABLE_USERS + ") ")
 
         if self.dbTable == "":
-            self.dbTable = c.DEFAULT_TABLE
+            self.dbTable = c.TABLE_USERS
 
         self.dbUser = input("Database Username: (" + c.DEFAULT_USER + ") ")
 

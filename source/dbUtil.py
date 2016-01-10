@@ -34,11 +34,12 @@ except ImportError:
 
 
 class DB:
-    def __init__(self, dbHost, dbDatabase, dbTable, dbUser, dbPass):
+    def __init__(self, dbHost, dbDatabase, dbUsersTable, dbVisitsTable, dbUser, dbPass):
         self.dbConn = None
         self.dbHost = dbHost
         self.dbDatabase = dbDatabase
-        self.dbTable = dbTable
+        self.dbUsersTable = dbUsersTable
+        self.dbVisitsTable = dbVisitsTable
         self.dbUser = dbUser
         self.dbPass = dbPass
 
@@ -80,7 +81,7 @@ class DB:
       
         try:
             # Add the new record into the DB
-            cursor.execute("""INSERT INTO %s (CUID, name) values (\'%s\', \'%s');""" % (self.dbTable, CUID, userID))
+            cursor.execute("""INSERT INTO %s (CUID, name) values (\'%s\', \'%s');""" % (self.dbUsersTable, CUID, userID))
             status = c.SUCCESS
         
         except psycopg2.Error as e:
@@ -110,7 +111,7 @@ class DB:
         try:
             cursor.execute("""BEGIN TRANSACTION;""")
             # Get the last check-in time
-            cursor.execute("""SELECT last_checkIn FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
+            cursor.execute("""SELECT last_checkIn FROM %s WHERE CUID=\'%s\';""" % (self.dbUsersTable, CUID))
 
             # Ensure that the card is in the database
             if cursor.rowcount == 0:
@@ -129,10 +130,10 @@ class DB:
 
             if status == c.SUCCESS:
                 # Update the database with the new visits         
-                cursor.execute("""UPDATE %s SET last_checkIN=\'%s\' WHERE CUID=\'%s\';""" % (self.dbTable, datetime.now(), CUID))
-                #cursor.execute("""UPDATE %s SET last_checkIn=\'%s\';""" % (self.dbTable, datetime.))
+                cursor.execute("""UPDATE %s SET last_checkIN=\'%s\' WHERE CUID=\'%s\';""" % (self.dbUsersTable, datetime.now(), CUID))
+                #cursor.execute("""UPDATE %s SET last_checkIn=\'%s\';""" % (self.dbUsersTable, datetime.))
                 # Grab the user ID that just checked-in to print confirmation
-                cursor.execute("""SELECT name FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
+                cursor.execute("""SELECT name FROM %s WHERE CUID=\'%s\';""" % (self.dbUsersTable, CUID))
 
                 userID = cursor.fetchone()[0]
         except psycopg2.Error as e:
@@ -189,9 +190,9 @@ class DB:
         try:
             # Either get all user ID's and visits from DB or just one user ID
             if userID == "":
-                cursor.execute("""SELECT userID, visits FROM %s ORDER BY visits DESC;""" % (self.dbTable))
+                cursor.execute("""SELECT userID, visits FROM %s ORDER BY visits DESC;""" % (self.dbUsersTable))
             else:
-                cursor.execute("""SELECT userID, visits FROM %s WHERE userID=\'%s\';""" % (self.dbTable, userID))
+                cursor.execute("""SELECT userID, visits FROM %s WHERE userID=\'%s\';""" % (self.dbUsersTable, userID))
 
             # Show error if no results (user ID is not in database)
             if cursor.rowcount == 0:
