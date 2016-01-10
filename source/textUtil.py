@@ -39,7 +39,7 @@ class TextUI:
                 self.getDbInfo()
 
                 # Create the DB object
-                self.db = DB(self.dbHost, self.dbName, self.dbTable, self.dbUser, self.dbPass)
+                self.db = DB(self.dbHost, self.dbName, self.dbUsersTable, self.dbVisitsTable, self.dbUser, self.dbPass)
                 
                 # Connect to the database
                 connectStatus = self.connectToDatabase()
@@ -218,10 +218,15 @@ class TextUI:
         if self.dbHost == "":
             self.dbHost = c.DEFAULT_HOST
 
-        self.dbTable = input("Database table: (" + c.TABLE_USERS + ") ")
+        self.dbUsersTable = input("Database User table: (" + c.TABLE_USERS + ") ")
 
-        if self.dbTable == "":
-            self.dbTable = c.TABLE_USERS
+        if self.dbUsersTable == "":
+            self.dbUsersTable = c.TABLE_USERS
+            
+        self.dbVisitsTable = input("Database Visits table: (" + c.TABLE_VISITS + ") ")
+
+        if self.dbVisitsTable == "":
+            self.dbVisitsTable = c.TABLE_VISITS
 
         self.dbUser = input("Database Username: (" + c.DEFAULT_USER + ") ")
 

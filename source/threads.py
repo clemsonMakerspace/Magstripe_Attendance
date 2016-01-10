@@ -26,11 +26,12 @@ import constants as c
 class LoginThread(QThread):
     postLoginSignal = pyqtSignal(int, object)
 
-    def __init__(self, dbHost, dbDatabase, dbTable, dbUser, dbPass, postLoginCallback):
+    def __init__(self, dbHost, dbDatabase, dbUsersTable, dbVisitsTable, dbUser, dbPass, postLoginCallback):
         super(LoginThread, self).__init__()
         self.dbHost = dbHost
         self.dbDatabase = dbDatabase
-        self.dbTable = dbTable
+        self.dbUsersTable = dbUsersTable
+        self.dbVisistsTable = dbVisitsTable
         self.dbUser = dbUser
         self.dbPass = dbPass
 
