@@ -163,15 +163,15 @@ class TextUI:
                     continue
             
             # Get the userID for the new card
-            userID = self.tools.sanitizeInput(input("User ID: "))
+                userID = self.tools.sanitizeInput(input("User ID: "))
 
             # Add the card
-            addCardResult = self.db.addCard(CUID, userID)
+                addCardResult = self.db.addCard(CUID, userID)
 
-            if addCardResult["addCardStatus"] == c.SUCCESS:
-                self.showCheckinConfirmation(userID)
-            elif addCardResult["addCardStatus"] == c.SQL_ERROR:
-                self.showDatabaseError(addCardResult["sqlError"])
+                if addCardResult["addCardStatus"] == c.SUCCESS:
+                    self.showCheckinConfirmation(userID)
+                elif addCardResult["addCardStatus"] == c.SQL_ERROR:
+                    self.showDatabaseError(addCardResult["sqlError"])
             elif checkInResult["checkInStatus"] == c.SUCCESS:
                 self.showCheckinConfirmation(checkInResult["userID"])
             else:

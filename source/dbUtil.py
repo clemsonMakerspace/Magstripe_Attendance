@@ -55,8 +55,9 @@ class DB:
             return c.SUCCESS         
         except psycopg2.Error as e:
             #if "user denied" in e.args[1]:  # Bad password error
-            print(e.pgerror)
-                #return c.BAD_PASSWD
+            print("\n",e)
+            #if "password authentication" in e:
+            #   return c.BAD_PASSWD
             #else:  # Other error
                 #return c.FAILURE
 
@@ -101,9 +102,13 @@ class DB:
         sqlError = None
 
         # Get a cursor to the DB
-        cursor = self.dbConn.cursor()
+        if self.dbConn is not None:
+            cursor = self.dbConn.cursor()
+        else:
+            print("dbConn is None")
 
         try:
+            cursor.execute("""BEGIN TRANSACTION;""")
             # Get the last check-in time
             cursor.execute("""SELECT last_checkIn FROM %s WHERE CUID=\'%s\';""" % (self.dbTable, CUID))
 
@@ -136,8 +141,9 @@ class DB:
             print(e)
             pass
         finally:
+            cursor.execute("""END TRANSACTION;""")
             cursor.close()
-
+        
         return {"checkInStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}
 
    
