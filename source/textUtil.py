@@ -163,10 +163,12 @@ class TextUI:
                     continue
             
             # Get the userID for the new card
-                userID = self.tools.sanitizeInput(input("User ID: "))
+                firstName = self.tools.sanitizeInput(input("First Name: "))
+                lastName = self.tools.sanitizeInput(input("Last Name: "))
+                email = self.tools.sanitizeInput(input("Clemson Username: "))
 
             # Add the card
-                addCardResult = self.db.addCard(CUID, userID)
+                addCardResult = self.db.addCard(CUID, firstName, lastName, email)
 
                 if addCardResult["addCardStatus"] == c.SUCCESS:
                     self.showCheckinConfirmation(userID)

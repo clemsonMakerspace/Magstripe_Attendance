@@ -23,6 +23,7 @@ from datetime import datetime
 
 import constants as c
 import psycopg2
+import email
 
 # The MySQLdb module must be available
 try:
@@ -70,7 +71,7 @@ class DB:
         if self.dbConn is not None:
             self.dbConn.close()
 
-    def addCard(self, CUID, userID):
+    def addCard(self, cuid, firstName, lastName, email):
     #===========================================================================
     # add a CUID and userID to the database
     #===========================================================================
@@ -78,20 +79,16 @@ class DB:
         sqlError = None
         # Get a cursor to the DB
         cursor = self.dbConn.cursor()
-      
+        
         try:
+            cursor.execute("""BEGIN TRANSACTION;""")
             # Add the new record into the DB
-            cursor.execute("""INSERT INTO %s (CUID, name) values (\'%s\', \'%s');""" % (self.dbUsersTable, CUID, userID))
-            status = c.SUCCESS
-        
-        except psycopg2.Error as e:
-            status = c.SQL_ERROR
-            sqlError = e
-        
-        finally:
+            cursor.execute("""INSERT INTO %s (%s, %s, %s, %s) values (\'%s\', \'%s');""" % (self.dbUsersTable, c.CUID_COLUMN_USER, c.FIRST_NAME_COLUMN_USER, c.LAST_NAME_COLUMN_USER, c.EMAIL_COLUMN_USER, cuid, firstName, lastName, email))          
+            cursor.execute("""END TRANSACTION;""")
+        finally:    
             cursor.close()
-
-        return {"addCardStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}
+            
+        return {"addCardStatus": status, "Name": firstName, "CUID": CUID, "sqlError": sqlError}
 
     def checkIn(self, CUID):
     #===========================================================================
@@ -133,9 +130,11 @@ class DB:
                 cursor.execute("""UPDATE %s SET last_checkIN=\'%s\' WHERE CUID=\'%s\';""" % (self.dbUsersTable, datetime.now(), CUID))
                 #cursor.execute("""UPDATE %s SET last_checkIn=\'%s\';""" % (self.dbUsersTable, datetime.))
                 # Grab the user ID that just checked-in to print confirmation
-                cursor.execute("""SELECT name FROM %s WHERE CUID=\'%s\';""" % (self.dbUsersTable, CUID))
+                cursor.execute("""SELECT %s FROM %s WHERE CUID=\'%s\';""" % (c.EMAIL_COLUMN_USER, self.dbUsersTable, CUID))
 
                 userID = cursor.fetchone()[0]
+                
+            cursor.execute("""END TRANSACTION;""")
         except psycopg2.Error as e:
             status = c.SQL_ERROR
             sqlError = e
@@ -143,7 +142,6 @@ class DB:
             print(e)
             pass
         finally:
-            cursor.execute("""END TRANSACTION;""")
             cursor.close()
         
         return {"checkInStatus": status, "userID": userID, "CUID": CUID, "sqlError": sqlError}

@@ -37,10 +37,10 @@ EMAIL_COLUMN_USER           = "email"
 ISIN_COLUMN_USER            = "isIn"
 VISIT_NUM_COLUMN_USER       = "visit_num"
 
-CUID_COLUMN_VISITS          = "cuid"
-VISIT_NUM_COLUMN_VISITS     = "visit_num"
-TIMEIN_COLUMN_VISITS        = "timeIn"
-TIMEOUT_COLUMN_VISITS       = "timeOut"
+CUID_COLUMN_VISIT           = "cuid"
+VISIT_NUM_COLUMN_VISIT      = "visit_num"
+TIMEIN_COLUMN_VISIT         = "timeIn"
+TIMEOUT_COLUMN_VISIT        = "timeOut"
 
 # TextUtil constants
 BACK = 10
