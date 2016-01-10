@@ -29,6 +29,19 @@ DEFAULT_VISITS              = 0
 ALLOW_CHECKIN_WITHIN_HOUR   = 1
 TIME_BETWEEN_CHECKINS       = 2 # In seconds
 
+CUID_COLUMN_USER            = "cuid"
+LAST_CHECKIN_COLUMN_USER    = "last_checkin"
+FIRST_NAME_COLUMN_USER      = "first_name"
+LAST_NAME_COLUMN_USER       = "last_name"
+EMAIL_COLUMN_USER           = "email"
+ISIN_COLUMN_USER            = "isIn"
+VISIT_NUM_COLUMN_USER       = "visit_num"
+
+CUID_COLUMN_VISITS          = "cuid"
+VISIT_NUM_COLUMN_VISITS     = "visit_num"
+TIMEIN_COLUMN_VISITS        = "timeIn"
+TIMEOUT_COLUMN_VISITS       = "timeOut"
+
 # TextUtil constants
 BACK = 10
 
