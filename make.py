@@ -17,7 +17,7 @@ def deleteDirectory(path):
     except OSError as ose:
         # Ignore 'no such file or directory' errors
         if ose.errno != 2:
-            print ose
+            print(ose)
 
 
 def deleteFile(path):
@@ -25,7 +25,7 @@ def deleteFile(path):
         os.unlink(path)
     except OSError as ose:
         if ose.errno != 2:
-            print ose
+            print(ose)
 
 
 arg = sys.argv[1] if len(sys.argv) >= 2 else None
@@ -35,6 +35,8 @@ if arg == 'dist':
         pyinstallerPath = sys.argv[2]
     else:
         pyinstallerPath = raw_input("Path to pyinstaller: ")
+        
+        
     clean()
     subprocess.call(['python', os.path.join(pyinstallerPath, 'pyinstaller.py'), 'acm_check-in.spec'])
 
@@ -45,4 +47,4 @@ elif arg == 'clean':
     clean()
 
 else:
-    print "Invalid option\nPossible options: dist, run, clean"
+    print("Invalid option\nPossible options: dist, run, clean")
