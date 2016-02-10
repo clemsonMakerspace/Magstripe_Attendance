@@ -28,7 +28,7 @@ import dbUtil
 def main(args):
     print(c.GROUP_NAME, "Attendance Tracker Version", c.VERSION)
     # Init textMode
-    textMode = 1
+    textMode = 1 #1 for text, 0 for UI
     # Process the arguments
     if len(args) > 1:
         arg = args[1].lower()
