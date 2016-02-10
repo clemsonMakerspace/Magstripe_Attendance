@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 #===============================================================================
 #    Magstripe Attendance Database System
 #===============================================================================
@@ -15,7 +17,7 @@
 #    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
-#!/usr/bin/env python
+
 import sys
 from ui import UI
 from textUtil import TextUI
