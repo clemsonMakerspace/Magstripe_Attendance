@@ -242,7 +242,7 @@ class TextUI:
     #===========================================================================
     # show confirmation of successful check in
     #===========================================================================
-        print("%s is checked in" % (userID))
+        print("\n%s is checked in" % (userID))
 
 
     def showDatabaseError(self, error):
