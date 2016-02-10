@@ -83,12 +83,14 @@ class DB:
         try:
             cursor.execute("""BEGIN TRANSACTION;""")
             # Add the new record into the DB
-            cursor.execute("""INSERT INTO %s (%s, %s, %s, %s) values (\'%s\', \'%s');""" % (self.dbUsersTable, c.CUID_COLUMN_USER, c.FIRST_NAME_COLUMN_USER, c.LAST_NAME_COLUMN_USER, c.EMAIL_COLUMN_USER, cuid, firstName, lastName, email))          
+            cursor.execute("""INSERT INTO %s (%s, %s, %s, %s, %s) values (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\');""" % (self.dbUsersTable, c.CUID_COLUMN_USER, c.FIRST_NAME_COLUMN_USER, c.LAST_NAME_COLUMN_USER, c.EMAIL_COLUMN_USER, c.VISIT_NUM_COLUMN_USER, cuid, firstName, lastName, email, c.DEFAULT_VISITS))
             cursor.execute("""END TRANSACTION;""")
         finally:    
             cursor.close()
+
+        checkInResult = self.checkIn(cuid)
             
-        return {"addCardStatus": status, "Name": firstName, "CUID": CUID, "sqlError": sqlError}
+        return {"addCardStatus": checkInResult["checkInStatus"], "Name": firstName, "CUID": cuid, "sqlError": sqlError}
 
     def checkIn(self, CUID):
     #===========================================================================
@@ -127,8 +129,9 @@ class DB:
 
             if status == c.SUCCESS:
                 # Update the database with the new visits         
-                cursor.execute("""UPDATE %s SET last_checkIN=\'%s\' WHERE CUID=\'%s\';""" % (self.dbUsersTable, datetime.now(), CUID))
-                #cursor.execute("""UPDATE %s SET last_checkIn=\'%s\';""" % (self.dbUsersTable, datetime.))
+                cursor.execute("""UPDATE %s SET %s = \'%s\' WHERE %s = \'%s\';""" % (self.dbUsersTable, c.LAST_CHECKIN_COLUMN_USER, datetime.now(), c.CUID_COLUMN_USER, CUID))
+                cursor.execute("""UPDATE %s SET %s = %s + 1 WHERE %s = \'%s\';""" % (self.dbUsersTable, c.VISIT_NUM_COLUMN_USER, c.VISIT_NUM_COLUMN_USER, c.CUID_COLUMN_USER, CUID))
+
                 # Grab the user ID that just checked-in to print confirmation
                 cursor.execute("""SELECT %s FROM %s WHERE CUID=\'%s\';""" % (c.EMAIL_COLUMN_USER, self.dbUsersTable, CUID))
 

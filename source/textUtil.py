@@ -171,7 +171,7 @@ class TextUI:
                 addCardResult = self.db.addCard(CUID, firstName, lastName, email)
 
                 if addCardResult["addCardStatus"] == c.SUCCESS:
-                    self.showCheckinConfirmation(userID)
+                    self.showCheckinConfirmation(email)
                 elif addCardResult["addCardStatus"] == c.SQL_ERROR:
                     self.showDatabaseError(addCardResult["sqlError"])
             elif checkInResult["checkInStatus"] == c.SUCCESS:
