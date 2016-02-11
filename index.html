@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Magstripe attendance : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Magstripe attendance</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/clemsonMakerspace/Magstripe_Attendance">View on GitHub</a>
+
+          <h1 id="project_title">Magstripe attendance</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/clemsonMakerspace/Magstripe_Attendance/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/clemsonMakerspace/Magstripe_Attendance/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="magstripe-attendance-database" class="anchor" href="#magstripe-attendance-database" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Magstripe Attendance Database</h1>
+
+<h4>
+<a id="owen-phillips-ophilliclemsonedu" class="anchor" href="#owen-phillips-ophilliclemsonedu" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Owen Phillips (<a href="mailto:ophilli@clemson.edu">ophilli@clemson.edu</a>)</h4>
+
+<h4>
+<a id="shane-tully-shaneshanetullycom" class="anchor" href="#shane-tully-shaneshanetullycom" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Shane Tully (<a href="mailto:shane@shanetully.com">shane@shanetully.com</a>)</h4>
+
+<h3>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h3>
+
+<p>This is a Python 3.x program depending on the following additional libraries </p>
+
+<ol>
+<li>
+<code>PyQt</code> - Python bindings for QT </li>
+<li>
+<code>psycopg2</code> - Python Postgres library</li>
+</ol>
+
+<h3>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Configuration</h3>
+
+<p>This program requires a database server (remote or local), that is configurable in 'Constants.py' or may be selected during login.</p>
+
+<p>For the database, this application expects two tables - users &amp; checkIns</p>
+
+<p>Setup the users table with 3 columns: </p>
+
+<ol>
+<li>card ID        - card ID from ID card (<code>varchar</code>, <code>primary key</code>) </li>
+<li>user ID        - university username (<code>varchar</code>) </li>
+<li>visits         - the number of check-ins (<code>int</code>)</li>
+</ol>
+
+<p>Setup the checkIns table with 2 columns: </p>
+
+<ol>
+<li>card ID </li>
+<li>checkIn  - the time of last check-in (<code>timestamp</code>)</li>
+</ol>
+
+<p>This application was built for a card reader that uses keyboard emulation. You can type the card info in, but a card reader is suggested.</p>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h3>
+
+<p>Simply run "./Check-in.py" to start the GUI. </p>
+
+<p>There is also a text-only mode. This can be started by using the "--nogui" argument.
+In text mode, enter "back" at any time to go up a menu level or exit the check-in loop.</p>
+
+<p>To populate your database, select the check-in option and begin adding users.</p>
+
+<p>After your database is populated you can use the "Show Points" option to show a single user's points or view a pretty table of all users in descending order from most to least points.</p>
+
+<p>By default a card is only allowed to check-in once per hour to prevent abuse.  This can be modified by changing the value of <code>ALLOW_CHECKIN_WITHIN_HOUR</code>  in <code>Constants.py</code>.</p>
+
+<h3>
+<a id="packaging" class="anchor" href="#packaging" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Packaging</h3>
+
+<p>A PyInstaller .spec file is provided to package the program and all  dependencies into a single binary file for Linux, Windows, or Mac.</p>
+
+<p>To create this binary, download PyInstaller and run <code>make.py dist [path to pyinstaller]</code>. The resulting binary will be in the <code>dist</code> directory. 
+Alternatively, precompiled binaries are available on the releases page on the GitHub repo.</p>
+
+<h3>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h3>
+
+<p>This program is free software: you can redistribute it and/or modify 
+it under the terms of the GNU General Public License as published by 
+the Free Software Foundation, either version 3 of the License, or 
+(at your option) any later version.</p>
+
+<p>This program is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+GNU General Public License for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License 
+along with this program.  If not, see <a href="http://www.gnu.org/licenses/">http://www.gnu.org/licenses/</a>. </p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Magstripe attendance maintained by <a href="https://github.com/clemsonMakerspace">clemsonMakerspace</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
