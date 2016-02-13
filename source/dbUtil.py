@@ -2,17 +2,17 @@
 #    Magstripe Attendance Database System
 #===============================================================================
 #
-#    This program is free software: you can redistribute it and/or modify
-#    it under the terms of the GNU General Public License as published by
+#    Magstripe Attendance is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU Lesser General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
 #    (at your option) any later version.
 #
-#    This program is distributed in the hope that it will be useful,
+#    Magstripe Attendance is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#    GNU General Public License for more details.
+#    GNU Lesser General Public License for more details.
 #
-#    You should have received a copy of the GNU General Public License
+#    You should have received a copy of the GNU Lesser General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 #===============================================================================
 
@@ -20,6 +20,7 @@ import os
 import re
 import sys
 from datetime import datetime
+from sharedUtils import Utils
 
 import constants as c
 import psycopg2
@@ -43,6 +44,7 @@ class DB:
         self.dbVisitsTable = dbVisitsTable
         self.dbUser = dbUser
         self.dbPass = dbPass
+        self.tools = Utils()
 
     def connect(self):
     #===========================================================================
@@ -79,16 +81,23 @@ class DB:
         sqlError = None
         # Get a cursor to the DB
         cursor = self.dbConn.cursor()
-        
+
+        cuid = self.tools.sanitizeInput(cuid)
+        firstName = self.tools.sanitizeInput(firstName)
+        lastName = self.tools.sanitizeInput(lastName)
+        email = self.tools.sanitizeInput(email)
+
         try:
             cursor.execute("""BEGIN TRANSACTION;""")
             # Add the new record into the DB
-            cursor.execute("""INSERT INTO %s (%s, %s, %s, %s) values (\'%s\', \'%s');""" % (self.dbUsersTable, c.CUID_COLUMN_USER, c.FIRST_NAME_COLUMN_USER, c.LAST_NAME_COLUMN_USER, c.EMAIL_COLUMN_USER, cuid, firstName, lastName, email))          
+            cursor.execute("""INSERT INTO %s (%s, %s, %s, %s, %s) values (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\');""" % (self.dbUsersTable, c.CUID_COLUMN_USER, c.FIRST_NAME_COLUMN_USER, c.LAST_NAME_COLUMN_USER, c.EMAIL_COLUMN_USER, c.VISIT_NUM_COLUMN_USER, cuid, firstName, lastName, email, c.DEFAULT_VISITS))
             cursor.execute("""END TRANSACTION;""")
-        finally:    
+        finally:
             cursor.close()
+
+        checkInResult = self.checkIn(cuid)
             
-        return {"addCardStatus": status, "Name": firstName, "CUID": CUID, "sqlError": sqlError}
+        return {"addCardStatus": checkInResult["checkInStatus"], "Name": firstName, "CUID": cuid, "sqlError": sqlError}
 
     def checkIn(self, CUID):
     #===========================================================================
@@ -127,8 +136,9 @@ class DB:
 
             if status == c.SUCCESS:
                 # Update the database with the new visits         
-                cursor.execute("""UPDATE %s SET last_checkIN=\'%s\' WHERE CUID=\'%s\';""" % (self.dbUsersTable, datetime.now(), CUID))
-                #cursor.execute("""UPDATE %s SET last_checkIn=\'%s\';""" % (self.dbUsersTable, datetime.))
+                cursor.execute("""UPDATE %s SET %s = \'%s\' WHERE %s = \'%s\';""" % (self.dbUsersTable, c.LAST_CHECKIN_COLUMN_USER, datetime.now(), c.CUID_COLUMN_USER, CUID))
+                cursor.execute("""UPDATE %s SET %s = %s + 1 WHERE %s = \'%s\';""" % (self.dbUsersTable, c.VISIT_NUM_COLUMN_USER, c.VISIT_NUM_COLUMN_USER, c.CUID_COLUMN_USER, CUID))
+
                 # Grab the user ID that just checked-in to print confirmation
                 cursor.execute("""SELECT %s FROM %s WHERE CUID=\'%s\';""" % (c.EMAIL_COLUMN_USER, self.dbUsersTable, CUID))
 
