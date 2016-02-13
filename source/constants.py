@@ -34,13 +34,11 @@ LAST_CHECKIN_COLUMN_USER    = "last_checkin"
 FIRST_NAME_COLUMN_USER      = "first_name"
 LAST_NAME_COLUMN_USER       = "last_name"
 EMAIL_COLUMN_USER           = "email"
-ISIN_COLUMN_USER            = "isIn"
 VISIT_NUM_COLUMN_USER       = "visit_num"
 
 CUID_COLUMN_VISIT           = "cuid"
 VISIT_NUM_COLUMN_VISIT      = "visit_num"
-TIMEIN_COLUMN_VISIT         = "timeIn"
-TIMEOUT_COLUMN_VISIT        = "timeOut"
+TIMEIN_COLUMN_VISIT         = "timein"
 
 # TextUtil constants
 BACK = 10
