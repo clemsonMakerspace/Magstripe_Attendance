@@ -38,7 +38,7 @@ class Utils:
 
         # The reserved words to check for
         # There are many more, of course, but these should thwart the most dangerous attacks
-        keywords = ["DELETE", "UPDATE", "DROP", "CREATE", "SELECT", "INSERT", "ALTER"]
+        keywords = ["DELETE", "UPDATE", "DROP", "CREATE", "SELECT", "INSERT", "ALTER", "'"]
   
         # Check for a match
         for i in keywords:
