@@ -107,6 +107,7 @@ class DB:
         status = c.FAILURE
         userID = None
         sqlError = None
+        visitNum = None
 
         # Get a cursor to the DB
         if self.dbConn is not None:
@@ -135,9 +136,14 @@ class DB:
 
 
             if status == c.SUCCESS:
-                # Update the database with the new visits         
+                # Update the database with the new visits
                 cursor.execute("""UPDATE %s SET %s = \'%s\' WHERE %s = \'%s\';""" % (self.dbUsersTable, c.LAST_CHECKIN_COLUMN_USER, datetime.now(), c.CUID_COLUMN_USER, CUID))
                 cursor.execute("""UPDATE %s SET %s = %s + 1 WHERE %s = \'%s\';""" % (self.dbUsersTable, c.VISIT_NUM_COLUMN_USER, c.VISIT_NUM_COLUMN_USER, c.CUID_COLUMN_USER, CUID))
+
+                cursor.execute("""SELECT %s FROM %s WHERE CUID=\'%s\';""" % (c.VISIT_NUM_COLUMN_USER, self.dbUsersTable, CUID))
+
+                visitNum = cursor.fetchone()[0]
+                cursor.execute("""INSERT INTO %s (%s, %s, %s) values (\'%s\', \'%s\', \'%s\');""" % (self.dbVisitsTable, c.CUID_COLUMN_VISIT, c.TIMEIN_COLUMN_VISIT, c.VISIT_NUM_COLUMN_VISIT, CUID, datetime.now(), visitNum))
 
                 # Grab the user ID that just checked-in to print confirmation
                 cursor.execute("""SELECT %s FROM %s WHERE CUID=\'%s\';""" % (c.EMAIL_COLUMN_USER, self.dbUsersTable, CUID))
