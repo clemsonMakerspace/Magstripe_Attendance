@@ -20,6 +20,7 @@ import os
 import re
 import sys
 from datetime import datetime
+from sharedUtils import Utils
 
 import constants as c
 import psycopg2
@@ -43,6 +44,7 @@ class DB:
         self.dbVisitsTable = dbVisitsTable
         self.dbUser = dbUser
         self.dbPass = dbPass
+        self.tools = Utils()
 
     def connect(self):
     #===========================================================================
@@ -79,13 +81,18 @@ class DB:
         sqlError = None
         # Get a cursor to the DB
         cursor = self.dbConn.cursor()
-        
+
+        cuid = self.tools.sanitizeInput(cuid)
+        firstName = self.tools.sanitizeInput(firstName)
+        lastName = self.tools.sanitizeInput(lastName)
+        email = self.tools.sanitizeInput(email)
+
         try:
             cursor.execute("""BEGIN TRANSACTION;""")
             # Add the new record into the DB
             cursor.execute("""INSERT INTO %s (%s, %s, %s, %s, %s) values (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\');""" % (self.dbUsersTable, c.CUID_COLUMN_USER, c.FIRST_NAME_COLUMN_USER, c.LAST_NAME_COLUMN_USER, c.EMAIL_COLUMN_USER, c.VISIT_NUM_COLUMN_USER, cuid, firstName, lastName, email, c.DEFAULT_VISITS))
             cursor.execute("""END TRANSACTION;""")
-        finally:    
+        finally:
             cursor.close()
 
         checkInResult = self.checkIn(cuid)
