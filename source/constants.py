@@ -16,7 +16,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 #===============================================================================
 
-VERSION = "6.1"
+VERSION = "6.2"
 GROUP_NAME = "Clemson University Makerspace"
 GROUP_INITIALS = "CMS"
 
